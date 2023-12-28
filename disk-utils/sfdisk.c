@@ -435,7 +435,6 @@ static int move_partition_data(struct sfdisk *sf, size_t partno, struct fdisk_pa
 	from = fdisk_partition_get_start(orig_pa);
 	to = fdisk_partition_get_start(pa);
 
-
 	if ((to >= from && from + nsectors >= to) ||
 	    (from >= to && to + nsectors >= from)) {
 		/* source and target overlay, check if we need to copy
@@ -462,7 +461,8 @@ static int move_partition_data(struct sfdisk *sf, size_t partno, struct fdisk_pa
 
 #if defined(POSIX_FADV_SEQUENTIAL) && defined(HAVE_POSIX_FADVISE)
 	if (!backward)
-		posix_fadvise(fd, from * ss, nsectors * ss, POSIX_FADV_SEQUENTIAL);
+		ignore_result( posix_fadvise(fd, from * ss,
+					nsectors * ss, POSIX_FADV_SEQUENTIAL) );
 #endif
 	devname = fdisk_partname(fdisk_get_devname(sf->cxt), partno+1);
 	if (sf->move_typescript)
@@ -515,7 +515,7 @@ static int move_partition_data(struct sfdisk *sf, size_t partno, struct fdisk_pa
 			(uintmax_t)to, (uintmax_t)to * ss);
 		fprintf(f, "# Area size (sectors/bytes): %ju/%ju\n",
 			(uintmax_t)nsectors, (uintmax_t)nsectors * ss);
-				fprintf(f, "# Step size (sectors/bytes): %zu/%zu\n", step, step_bytes);
+				fprintf(f, "# Step size (sectors/bytes): %" PRIu64 "/%zu\n", step, step_bytes);
 		fprintf(f, "# Steps: %ju\n", ((uintmax_t) nsectors / step) + 1);
 		fprintf(f, "#\n");
 		fprintf(f, "# <step>: <from> <to> (step offsets in bytes)\n");
@@ -533,7 +533,7 @@ static int move_partition_data(struct sfdisk *sf, size_t partno, struct fdisk_pa
 	for (cc = 1, i = 0; i < nsectors && nbytes > 0; i += step, cc++) {
 
 		if (nbytes < step_bytes) {
-			DBG(MISC, ul_debug("aligning step #%05zu from %ju to %ju",
+			DBG(MISC, ul_debug("aligning step #%05zu from %zu to %ju",
 						cc, step_bytes, nbytes));
 			step_bytes = nbytes;
 		}
@@ -551,7 +551,7 @@ static int move_partition_data(struct sfdisk *sf, size_t partno, struct fdisk_pa
 				if (f)
 					fprintf(f, "%05zu: read error %12ju %12ju\n", cc, src, dst);
 				fdisk_warn(sf->cxt,
-					_("cannot read at offset: %zu; continue"), src);
+					_("cannot read at offset: %ju; continue"), src);
 				ioerr++;
 				goto next;
 			}
@@ -562,12 +562,13 @@ static int move_partition_data(struct sfdisk *sf, size_t partno, struct fdisk_pa
 				if (f)
 					fprintf(f, "%05zu: write error %12ju %12ju\n", cc, src, dst);
 				fdisk_warn(sf->cxt,
-					_("cannot write at offset: %zu; continue"), dst);
+					_("cannot write at offset: %ju; continue"), dst);
 				ioerr++;
 				goto next;
 			}
-			if (sf->movefsync)
-				fsync(fd);
+			if (sf->movefsync && fsync(fd) != 0)
+				fdisk_warn(sf->cxt,
+					_("cannot fsync at offset: %ju; continue"), dst);
 		}
 
 		/* write log */
@@ -608,7 +609,7 @@ next:
 			src += step_bytes, dst += step_bytes;
 	}
 
-	if (progress) {
+	if (progress && nsectors) {
 		int x = get_terminal_width(80);
 		for (; x > 0; x--)
 			fputc(' ', stdout);

@@ -226,7 +226,7 @@ static const struct lslogins_coldesc coldescs[] =
 {
 	[COL_USER]          = { "USER",		N_("user name"), N_("Username"), 0.1, SCOLS_FL_NOEXTREMES },
 	[COL_UID]           = { "UID",		N_("user ID"), "UID", 1, SCOLS_FL_RIGHT},
-	[COL_PWDEMPTY]      = { "PWD-EMPTY",	N_("password not required"), N_("Password not required"), 1, SCOLS_FL_RIGHT },
+	[COL_PWDEMPTY]      = { "PWD-EMPTY",	N_("password not defined"), N_("Password not required (empty)"), 1, SCOLS_FL_RIGHT },
 	[COL_PWDDENY]       = { "PWD-DENY",	N_("login by password disabled"), N_("Login by password disabled"), 1, SCOLS_FL_RIGHT },
 	[COL_PWDLOCK]       = { "PWD-LOCK",	N_("password defined, but locked"), N_("Password is locked"), 1, SCOLS_FL_RIGHT },
 	[COL_PWDMETHOD]     = { "PWD-METHOD",   N_("password encryption method"), N_("Password encryption method"), 0.1 },
@@ -478,7 +478,7 @@ static struct utmpx *get_last_btmp(struct lslogins_control *ctl, const char *use
 
 static int parse_utmpx(const char *path, size_t *nrecords, struct utmpx **records)
 {
-	size_t i, imax = 0;
+	size_t i, imax = 1;
 	struct utmpx *ary = NULL;
 	struct stat st;
 
@@ -490,7 +490,7 @@ static int parse_utmpx(const char *path, size_t *nrecords, struct utmpx **record
 
 	/* optimize allocation according to file size, the realloc() below is
 	 * just fallback only */
-	if (stat(path, &st) == 0 && (size_t) st.st_size > sizeof(struct utmpx)) {
+	if (stat(path, &st) == 0 && (size_t) st.st_size >= sizeof(struct utmpx)) {
 		imax = st.st_size / sizeof(struct utmpx);
 		ary = xmalloc(imax * sizeof(struct utmpx));
 	}
@@ -604,7 +604,7 @@ static int get_nprocs(const uid_t uid)
 }
 #endif
 
-static const char *get_pwd_method(const char *str, const char **next, unsigned int *sz)
+static const char *get_pwd_method(const char *str, const char **next)
 {
 	const char *p = str;
 	const char *res = NULL;
@@ -612,32 +612,50 @@ static const char *get_pwd_method(const char *str, const char **next, unsigned i
 	if (!p || *p++ != '$')
 		return NULL;
 
-	if (sz)
-		*sz = 0;
-
 	switch (*p) {
 	case '1':
 		res = "MD5";
-		if (sz)
-			*sz = 22;
 		break;
 	case '2':
-		p++;
-		if (*p == 'a' || *p == 'y')
+		switch(*(p+1)) {
+		case 'a':
+		case 'y':
+			p++;
 			res = "Blowfish";
+			break;
+		case 'b':
+			p++;
+			res = "bcrypt";
+			break;
+		}
+		break;
+	case '3':
+		res = "NT";
 		break;
 	case '5':
 		res = "SHA-256";
-		if (sz)
-			*sz = 43;
 		break;
 	case '6':
 		res = "SHA-512";
-		if (sz)
-			*sz = 86;
+		break;
+	case '7':
+		res = "scrypt";
+		break;
+	case 'y':
+		res = "yescrypt";
+		break;
+	case 'g':
+		if (*(p + 1) == 'y') {
+			p++;
+			res = "gost-yescrypt";
+		}
+		break;
+	case '_':
+		res = "bsdicrypt";
 		break;
 	default:
-		return NULL;
+		res = "unknown";
+		break;
 	}
 	p++;
 
@@ -648,7 +666,10 @@ static const char *get_pwd_method(const char *str, const char **next, unsigned i
 	return res;
 }
 
-#define is_valid_pwd_char(x)	(isalnum((unsigned char) (x)) || (x) ==  '.' || (x) == '/')
+#define is_invalid_pwd_char(x)	(isspace((unsigned char) (x)) || \
+				 (x) == ':' || (x) == ';' || (x) == '*' || \
+				 (x) == '!' || (x) == '\\')
+#define is_valid_pwd_char(x)	(isascii((unsigned char) (x)) && !is_invalid_pwd_char(x))
 
 /*
  * This function do not accept empty passwords or locked accouns.
@@ -656,17 +677,16 @@ static const char *get_pwd_method(const char *str, const char **next, unsigned i
 static int valid_pwd(const char *str)
 {
 	const char *p = str;
-	unsigned int sz = 0, n;
 
 	if (!str || !*str)
 		return 0;
 
 	/* $id$ */
-	if (get_pwd_method(str, &p, &sz) == NULL)
-		return 0;
-	if (!p || !*p)
+	if (get_pwd_method(str, &p) == NULL)
 		return 0;
 
+	if (!p || !*p)
+		return 0;
 	/* salt$ */
 	for (; *p; p++) {
 		if (*p == '$') {
@@ -676,17 +696,15 @@ static int valid_pwd(const char *str)
 		if (!is_valid_pwd_char(*p))
 			return 0;
 	}
+
 	if (!*p)
 		return 0;
-
 	/* encrypted */
-	for (n = 0; *p; p++, n++) {
-		if (!is_valid_pwd_char(*p))
+	for (; *p; p++) {
+		if (!is_valid_pwd_char(*p)) {
 			return 0;
+		}
 	}
-
-	if (sz && n != sz)
-		return 0;
 	return 1;
 }
 
@@ -823,23 +841,42 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 			break;
 		case COL_PWDEMPTY:
 			if (shadow) {
-				if (!*shadow->sp_pwdp) /* '\0' */
+				const char *p = shadow->sp_pwdp;
+
+				while (p && (*p == '!' || *p == '*'))
+					p++;
+
+				if (!p || !*p)
 					user->pwd_empty = STATUS_TRUE;
 			} else
 				user->pwd_empty = STATUS_UNKNOWN;
 			break;
 		case COL_PWDDENY:
 			if (shadow) {
-				if ((*shadow->sp_pwdp == '!' ||
-				     *shadow->sp_pwdp == '*') &&
-				    !valid_pwd(shadow->sp_pwdp + 1))
+				const char *p = shadow->sp_pwdp;
+
+				while (p && (*p == '!' || *p == '*'))
+					p++;
+
+				if (p && *p && p != shadow->sp_pwdp && !valid_pwd(p))
 					user->pwd_deny = STATUS_TRUE;
 			} else
 				user->pwd_deny = STATUS_UNKNOWN;
 			break;
 		case COL_PWDLOCK:
 			if (shadow) {
-				if (*shadow->sp_pwdp == '!' && valid_pwd(shadow->sp_pwdp + 1))
+				const char *p = shadow->sp_pwdp;
+				int i = 0;
+
+				/* 'passwd --lock' uses two exclamation marks,
+				 * shadow(5) describes the lock as "field which
+				 * starts with an exclamation mark". Let's
+				 * support more '!' ...
+				 */
+				while (p && *p == '!')
+					p++, i++;
+
+				if (i != 0 && (!*p || valid_pwd(p)))
 					user->pwd_lock = STATUS_TRUE;
 			} else
 				user->pwd_lock = STATUS_UNKNOWN;
@@ -848,9 +885,9 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 			if (shadow) {
 				const char *p = shadow->sp_pwdp;
 
-				if (*p == '!' || *p == '*')
+				while (p && (*p == '!' || *p == '*'))
 					p++;
-				user->pwd_method = get_pwd_method(p, NULL, NULL);
+				user->pwd_method = get_pwd_method(p, NULL);
 			} else
 				user->pwd_method = NULL;
 			break;
@@ -993,6 +1030,9 @@ static int get_ulist(struct lslogins_control *ctl, char *logins, char *groups)
 static void free_ctl(struct lslogins_control *ctl)
 {
 	size_t n = 0;
+
+	if (!ctl)
+		return;
 
 	free(ctl->wtmp);
 	free(ctl->btmp);

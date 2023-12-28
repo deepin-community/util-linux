@@ -1,8 +1,8 @@
-/* A Bison parser, made by GNU Bison 3.7.4.  */
+/* A Bison parser, made by GNU Bison 3.8.2.  */
 
 /* Bison implementation for Yacc-like parsers in C
 
-   Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2020 Free Software Foundation,
+   Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2021 Free Software Foundation,
    Inc.
 
    This program is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
+   along with this program.  If not, see <https://www.gnu.org/licenses/>.  */
 
 /* As a special exception, you may create a larger work that contains
    part or all of the Bison parser skeleton and distribute that work
@@ -46,10 +46,10 @@
    USER NAME SPACE" below.  */
 
 /* Identify Bison output, and Bison version.  */
-#define YYBISON 30704
+#define YYBISON 30802
 
 /* Bison version string.  */
-#define YYBISON_VERSION "3.7.4"
+#define YYBISON_VERSION "3.8.2"
 
 /* Skeleton name.  */
 #define YYSKELETON_NAME "yacc.c"
@@ -103,6 +103,13 @@
  * nanosecond-resolution timestamps, and in October 2004 to support
  * TZ strings in dates.
  */
+
+#ifdef __clang__
+/* clang 15 detects yynerrs as unused.
+ * Will be fixed in future versions of bison.
+ */
+#pragma clang diagnostic ignored "-Wunused-but-set-variable"
+#endif
 
 /**
  * FIXME: Check for arithmetic overflow in all cases, not just
@@ -349,7 +356,7 @@ set_hhmmss(parser_control *pc, intmax_t hour, intmax_t minutes,
 }
 
 
-#line 353 "sys-utils/hwclock-parse-date.c"
+#line 360 "sys-utils/hwclock-parse-date.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -443,14 +450,14 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 294 "sys-utils/hwclock-parse-date.y"
+#line 301 "sys-utils/hwclock-parse-date.y"
 
 	intmax_t intval;
 	textint textintval;
 	struct timespec timespec;
 	relative_time rel;
 
-#line 454 "sys-utils/hwclock-parse-date.c"
+#line 461 "sys-utils/hwclock-parse-date.c"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -460,7 +467,9 @@ typedef union YYSTYPE YYSTYPE;
 
 
 
+
 int yyparse (parser_control *pc);
+
 
 
 /* Symbol kind.  */
@@ -564,6 +573,18 @@ typedef int_least16_t yytype_int16;
 typedef short yytype_int16;
 #endif
 
+/* Work around bug in HP-UX 11.23, which defines these macros
+   incorrectly for preprocessor constants.  This workaround can likely
+   be removed in 2023, as HPE has promised support for HP-UX 11.23
+   (aka HP-UX 11i v2) only through the end of 2022; see Table 2 of
+   <https://h20195.www2.hpe.com/V2/getpdf.aspx/4AA4-7673ENW.pdf>.  */
+#ifdef __hpux
+# undef UINT_LEAST8_MAX
+# undef UINT_LEAST16_MAX
+# define UINT_LEAST8_MAX 255
+# define UINT_LEAST16_MAX 65535
+#endif
+
 #if defined __UINT_LEAST8_MAX__ && __UINT_LEAST8_MAX__ <= __INT_MAX__
 typedef __UINT_LEAST8_TYPE__ yytype_uint8;
 #elif (!defined __UINT_LEAST8_MAX__ && defined YY_STDINT_H \
@@ -661,17 +682,23 @@ typedef int yy_state_fast_t;
 
 /* Suppress unused-variable warnings by "using" E.  */
 #if ! defined lint || defined __GNUC__
-# define YYUSE(E) ((void) (E))
+# define YY_USE(E) ((void) (E))
 #else
-# define YYUSE(E) /* empty */
+# define YY_USE(E) /* empty */
 #endif
 
-#if defined __GNUC__ && ! defined __ICC && 407 <= __GNUC__ * 100 + __GNUC_MINOR__
 /* Suppress an incorrect diagnostic about yylval being uninitialized.  */
-# define YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN                            \
+#if defined __GNUC__ && ! defined __ICC && 406 <= __GNUC__ * 100 + __GNUC_MINOR__
+# if __GNUC__ * 100 + __GNUC_MINOR__ < 407
+#  define YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN                           \
+    _Pragma ("GCC diagnostic push")                                     \
+    _Pragma ("GCC diagnostic ignored \"-Wuninitialized\"")
+# else
+#  define YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN                           \
     _Pragma ("GCC diagnostic push")                                     \
     _Pragma ("GCC diagnostic ignored \"-Wuninitialized\"")              \
     _Pragma ("GCC diagnostic ignored \"-Wmaybe-uninitialized\"")
+# endif
 # define YY_IGNORE_MAYBE_UNINITIALIZED_END      \
     _Pragma ("GCC diagnostic pop")
 #else
@@ -887,19 +914,19 @@ static const yytype_int8 yytranslate[] =
 };
 
 #if YYDEBUG
-  /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
+/* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int16 yyrline[] =
 {
-       0,   321,   321,   322,   326,   332,   334,   338,   341,   344,
-     347,   350,   353,   356,   357,   358,   362,   366,   370,   374,
-     378,   382,   386,   390,   394,   400,   402,   406,   431,   435,
-     446,   449,   452,   456,   460,   464,   467,   473,   477,   481,
-     485,   492,   496,   514,   521,   528,   532,   537,   541,   546,
-     550,   559,   561,   563,   568,   570,   572,   574,   576,   578,
-     580,   582,   584,   586,   588,   590,   592,   594,   596,   598,
-     600,   602,   607,   612,   614,   618,   620,   622,   624,   626,
-     628,   633,   637,   637,   640,   641,   646,   647,   652,   657,
-     669,   670
+       0,   328,   328,   329,   333,   339,   341,   345,   348,   351,
+     354,   357,   360,   363,   364,   365,   369,   373,   377,   381,
+     385,   389,   393,   397,   401,   407,   409,   413,   438,   442,
+     453,   456,   459,   463,   467,   471,   474,   480,   484,   488,
+     492,   499,   503,   521,   528,   535,   539,   544,   548,   553,
+     557,   566,   568,   570,   575,   577,   579,   581,   583,   585,
+     587,   589,   591,   593,   595,   597,   599,   601,   603,   605,
+     607,   609,   614,   619,   621,   625,   627,   629,   631,   633,
+     635,   640,   644,   644,   647,   648,   653,   654,   659,   664,
+     676,   677
 };
 #endif
 
@@ -935,17 +962,6 @@ yysymbol_name (yysymbol_kind_t yysymbol)
 }
 #endif
 
-#ifdef YYPRINT
-/* YYTOKNUM[NUM] -- (External) token number corresponding to the
-   (internal) symbol number NUM (which must be that of a token).  */
-static const yytype_int16 yytoknum[] =
-{
-       0,   256,   257,   258,   259,   260,   261,   262,   263,   264,
-     265,   266,   267,   268,   269,   270,   271,   272,   273,   274,
-     275,   276,   277,    64,    84,    58,    44,    47
-};
-#endif
-
 #define YYPACT_NINF (-93)
 
 #define yypact_value_is_default(Yyn) \
@@ -956,8 +972,8 @@ static const yytype_int16 yytoknum[] =
 #define yytable_value_is_error(Yyn) \
   0
 
-  /* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
-     STATE-NUM.  */
+/* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
+   STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
       38,    27,    77,   -93,    46,   -93,   -93,   -93,   -93,   -93,
@@ -974,9 +990,9 @@ static const yytype_int8 yypact[] =
      -93,   -93,    69,    91
 };
 
-  /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
-     Performed when YYTABLE does not specify something else to do.  Zero
-     means the default is an error.  */
+/* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
+   Performed when YYTABLE does not specify something else to do.  Zero
+   means the default is an error.  */
 static const yytype_int8 yydefact[] =
 {
        5,     0,     0,     2,     3,    85,    87,    84,    86,     4,
@@ -993,7 +1009,7 @@ static const yytype_int8 yydefact[] =
       20,    24,     0,    25
 };
 
-  /* YYPGOTO[NTERM-NUM].  */
+/* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
      -93,   -93,   -93,   -93,   -93,   -93,   -93,   -93,    20,   -68,
@@ -1001,17 +1017,17 @@ static const yytype_int8 yypgoto[] =
      -93,   -93,   -92,   -93,   -93,    43
 };
 
-  /* YYDEFGOTO[NTERM-NUM].  */
+/* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-      -1,     2,     3,     4,    31,    32,    33,    34,    35,   103,
+       0,     2,     3,     4,    31,    32,    33,    34,    35,   103,
      104,    36,    37,    38,    39,    40,    41,    42,    43,    44,
        9,    10,    11,    45,    46,    93
 };
 
-  /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
-     positive, shift that token.  If negative, reduce the rule whose
-     number is the opposite.  If YYTABLE_NINF, syntax error.  */
+/* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
+   positive, shift that token.  If negative, reduce the rule whose
+   number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int8 yytable[] =
 {
       79,    67,    68,    69,    70,    71,    72,    58,    73,   100,
@@ -1044,8 +1060,8 @@ static const yytype_int8 yycheck[] =
       19,    -1,    25
 };
 
-  /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
-     symbol of state STATE-NUM.  */
+/* YYSTOS[STATE-NUM] -- The symbol kind of the accessing symbol of
+   state STATE-NUM.  */
 static const yytype_int8 yystos[] =
 {
        0,    23,    29,    30,    31,    19,    20,    21,    22,    48,
@@ -1062,7 +1078,7 @@ static const yytype_int8 yystos[] =
       15,    37,    25,    50
 };
 
-  /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
+/* YYR1[RULE-NUM] -- Symbol kind of the left-hand side of rule RULE-NUM.  */
 static const yytype_int8 yyr1[] =
 {
        0,    28,    29,    29,    30,    31,    31,    32,    32,    32,
@@ -1077,7 +1093,7 @@ static const yytype_int8 yyr1[] =
       53,    53
 };
 
-  /* YYR2[YYN] -- Number of symbols on the right hand side of rule YYN.  */
+/* YYR2[RULE-NUM] -- Number of symbols on the right-hand side of rule RULE-NUM.  */
 static const yytype_int8 yyr2[] =
 {
        0,     2,     1,     1,     2,     0,     2,     1,     1,     1,
@@ -1101,6 +1117,7 @@ enum { YYENOMEM = -2 };
 #define YYACCEPT        goto yyacceptlab
 #define YYABORT         goto yyabortlab
 #define YYERROR         goto yyerrorlab
+#define YYNOMEM         goto yyexhaustedlab
 
 
 #define YYRECOVERING()  (!!yyerrstatus)
@@ -1141,10 +1158,7 @@ do {                                            \
     YYFPRINTF Args;                             \
 } while (0)
 
-/* This macro is provided for backward compatibility. */
-# ifndef YY_LOCATION_PRINT
-#  define YY_LOCATION_PRINT(File, Loc) ((void) 0)
-# endif
+
 
 
 # define YY_SYMBOL_PRINT(Title, Kind, Value, Location)                    \
@@ -1168,16 +1182,12 @@ yy_symbol_value_print (FILE *yyo,
                        yysymbol_kind_t yykind, YYSTYPE const * const yyvaluep, parser_control *pc)
 {
   FILE *yyoutput = yyo;
-  YYUSE (yyoutput);
-  YYUSE (pc);
+  YY_USE (yyoutput);
+  YY_USE (pc);
   if (!yyvaluep)
     return;
-# ifdef YYPRINT
-  if (yykind < YYNTOKENS)
-    YYPRINT (yyo, yytoknum[yykind], *yyvaluep);
-# endif
   YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
-  YYUSE (yykind);
+  YY_USE (yykind);
   YY_IGNORE_MAYBE_UNINITIALIZED_END
 }
 
@@ -1291,14 +1301,14 @@ static void
 yydestruct (const char *yymsg,
             yysymbol_kind_t yykind, YYSTYPE *yyvaluep, parser_control *pc)
 {
-  YYUSE (yyvaluep);
-  YYUSE (pc);
+  YY_USE (yyvaluep);
+  YY_USE (pc);
   if (!yymsg)
     yymsg = "Deleting";
   YY_SYMBOL_PRINT (yymsg, yykind, yyvaluep, yylocationp);
 
   YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
-  YYUSE (yykind);
+  YY_USE (yykind);
   YY_IGNORE_MAYBE_UNINITIALIZED_END
 }
 
@@ -1367,6 +1377,7 @@ YYSTYPE yylval YY_INITIAL_VALUE (= yyval_default);
   YYDPRINTF ((stderr, "Starting parse\n"));
 
   yychar = YYEMPTY; /* Cause a token to be read.  */
+
   goto yysetstate;
 
 
@@ -1392,7 +1403,7 @@ yysetstate:
 
   if (yyss + yystacksize - 1 <= yyssp)
 #if !defined yyoverflow && !defined YYSTACK_RELOCATE
-    goto yyexhaustedlab;
+    YYNOMEM;
 #else
     {
       /* Get the current used size of the three stacks, in elements.  */
@@ -1420,7 +1431,7 @@ yysetstate:
 # else /* defined YYSTACK_RELOCATE */
       /* Extend the stack our own way.  */
       if (YYMAXDEPTH <= yystacksize)
-        goto yyexhaustedlab;
+        YYNOMEM;
       yystacksize *= 2;
       if (YYMAXDEPTH < yystacksize)
         yystacksize = YYMAXDEPTH;
@@ -1431,7 +1442,7 @@ yysetstate:
           YY_CAST (union yyalloc *,
                    YYSTACK_ALLOC (YY_CAST (YYSIZE_T, YYSTACK_BYTES (yystacksize))));
         if (! yyptr)
-          goto yyexhaustedlab;
+          YYNOMEM;
         YYSTACK_RELOCATE (yyss_alloc, yyss);
         YYSTACK_RELOCATE (yyvs_alloc, yyvs);
 #  undef YYSTACK_RELOCATE
@@ -1452,6 +1463,7 @@ yysetstate:
         YYABORT;
     }
 #endif /* !defined yyoverflow && !defined YYSTACK_RELOCATE */
+
 
   if (yystate == YYFINAL)
     YYACCEPT;
@@ -1565,249 +1577,249 @@ yyreduce:
   switch (yyn)
     {
   case 4: /* timespec: '@' seconds  */
-#line 326 "sys-utils/hwclock-parse-date.y"
+#line 333 "sys-utils/hwclock-parse-date.y"
                       {
 		pc->seconds = (yyvsp[0].timespec);
 		pc->timespec_seen = 1;
 	  }
-#line 1574 "sys-utils/hwclock-parse-date.c"
+#line 1586 "sys-utils/hwclock-parse-date.c"
     break;
 
   case 7: /* item: datetime  */
-#line 338 "sys-utils/hwclock-parse-date.y"
+#line 345 "sys-utils/hwclock-parse-date.y"
                    {
 		pc->times_seen++; pc->dates_seen++;
 	  }
-#line 1582 "sys-utils/hwclock-parse-date.c"
+#line 1594 "sys-utils/hwclock-parse-date.c"
     break;
 
   case 8: /* item: time  */
-#line 341 "sys-utils/hwclock-parse-date.y"
+#line 348 "sys-utils/hwclock-parse-date.y"
                {
 		pc->times_seen++;
 	  }
-#line 1590 "sys-utils/hwclock-parse-date.c"
+#line 1602 "sys-utils/hwclock-parse-date.c"
     break;
 
   case 9: /* item: local_zone  */
-#line 344 "sys-utils/hwclock-parse-date.y"
+#line 351 "sys-utils/hwclock-parse-date.y"
                      {
 		pc->local_zones_seen++;
 	  }
-#line 1598 "sys-utils/hwclock-parse-date.c"
+#line 1610 "sys-utils/hwclock-parse-date.c"
     break;
 
   case 10: /* item: zone  */
-#line 347 "sys-utils/hwclock-parse-date.y"
+#line 354 "sys-utils/hwclock-parse-date.y"
                {
 		pc->zones_seen++;
 	  }
-#line 1606 "sys-utils/hwclock-parse-date.c"
+#line 1618 "sys-utils/hwclock-parse-date.c"
     break;
 
   case 11: /* item: date  */
-#line 350 "sys-utils/hwclock-parse-date.y"
+#line 357 "sys-utils/hwclock-parse-date.y"
                {
 		pc->dates_seen++;
 	  }
-#line 1614 "sys-utils/hwclock-parse-date.c"
+#line 1626 "sys-utils/hwclock-parse-date.c"
     break;
 
   case 12: /* item: day  */
-#line 353 "sys-utils/hwclock-parse-date.y"
+#line 360 "sys-utils/hwclock-parse-date.y"
               {
 		pc->days_seen++;
 	  }
-#line 1622 "sys-utils/hwclock-parse-date.c"
+#line 1634 "sys-utils/hwclock-parse-date.c"
     break;
 
   case 18: /* time: tUNUMBER tMERIDIAN  */
-#line 370 "sys-utils/hwclock-parse-date.y"
+#line 377 "sys-utils/hwclock-parse-date.y"
                              {
 		set_hhmmss (pc, (yyvsp[-1].textintval).value, 0, 0, 0);
 		pc->meridian = (yyvsp[0].intval);
 	  }
-#line 1631 "sys-utils/hwclock-parse-date.c"
+#line 1643 "sys-utils/hwclock-parse-date.c"
     break;
 
   case 19: /* time: tUNUMBER ':' tUNUMBER tMERIDIAN  */
-#line 374 "sys-utils/hwclock-parse-date.y"
+#line 381 "sys-utils/hwclock-parse-date.y"
                                           {
 		set_hhmmss (pc, (yyvsp[-3].textintval).value, (yyvsp[-1].textintval).value, 0, 0);
 		pc->meridian = (yyvsp[0].intval);
 	  }
-#line 1640 "sys-utils/hwclock-parse-date.c"
+#line 1652 "sys-utils/hwclock-parse-date.c"
     break;
 
   case 20: /* time: tUNUMBER ':' tUNUMBER ':' unsigned_seconds tMERIDIAN  */
-#line 378 "sys-utils/hwclock-parse-date.y"
+#line 385 "sys-utils/hwclock-parse-date.y"
                                                                {
 		set_hhmmss (pc, (yyvsp[-5].textintval).value, (yyvsp[-3].textintval).value, (yyvsp[-1].timespec).tv_sec, (yyvsp[-1].timespec).tv_nsec);
 		pc->meridian = (yyvsp[0].intval);
 	  }
-#line 1649 "sys-utils/hwclock-parse-date.c"
+#line 1661 "sys-utils/hwclock-parse-date.c"
     break;
 
   case 22: /* iso_8601_time: tUNUMBER zone_offset  */
-#line 386 "sys-utils/hwclock-parse-date.y"
+#line 393 "sys-utils/hwclock-parse-date.y"
                                {
 		set_hhmmss (pc, (yyvsp[-1].textintval).value, 0, 0, 0);
 		pc->meridian = MER24;
 	  }
-#line 1658 "sys-utils/hwclock-parse-date.c"
+#line 1670 "sys-utils/hwclock-parse-date.c"
     break;
 
   case 23: /* iso_8601_time: tUNUMBER ':' tUNUMBER o_zone_offset  */
-#line 390 "sys-utils/hwclock-parse-date.y"
+#line 397 "sys-utils/hwclock-parse-date.y"
                                               {
 		set_hhmmss (pc, (yyvsp[-3].textintval).value, (yyvsp[-1].textintval).value, 0, 0);
 		pc->meridian = MER24;
 	  }
-#line 1667 "sys-utils/hwclock-parse-date.c"
+#line 1679 "sys-utils/hwclock-parse-date.c"
     break;
 
   case 24: /* iso_8601_time: tUNUMBER ':' tUNUMBER ':' unsigned_seconds o_zone_offset  */
-#line 394 "sys-utils/hwclock-parse-date.y"
+#line 401 "sys-utils/hwclock-parse-date.y"
                                                                    {
 		set_hhmmss (pc, (yyvsp[-5].textintval).value, (yyvsp[-3].textintval).value, (yyvsp[-1].timespec).tv_sec, (yyvsp[-1].timespec).tv_nsec);
 		pc->meridian = MER24;
 	  }
-#line 1676 "sys-utils/hwclock-parse-date.c"
+#line 1688 "sys-utils/hwclock-parse-date.c"
     break;
 
   case 27: /* zone_offset: tSNUMBER o_colon_minutes  */
-#line 406 "sys-utils/hwclock-parse-date.y"
+#line 413 "sys-utils/hwclock-parse-date.y"
                                    {
 		pc->zones_seen++;
 		if (! time_zone_hhmm (pc, (yyvsp[-1].textintval), (yyvsp[0].textintval))) YYABORT;
 	  }
-#line 1685 "sys-utils/hwclock-parse-date.c"
+#line 1697 "sys-utils/hwclock-parse-date.c"
     break;
 
   case 28: /* local_zone: tLOCAL_ZONE  */
-#line 431 "sys-utils/hwclock-parse-date.y"
+#line 438 "sys-utils/hwclock-parse-date.y"
                       {
 		pc->local_isdst = (yyvsp[0].intval);
 		pc->dsts_seen += (0 < (yyvsp[0].intval));
 	  }
-#line 1694 "sys-utils/hwclock-parse-date.c"
+#line 1706 "sys-utils/hwclock-parse-date.c"
     break;
 
   case 29: /* local_zone: tLOCAL_ZONE tDST  */
-#line 435 "sys-utils/hwclock-parse-date.y"
+#line 442 "sys-utils/hwclock-parse-date.y"
                            {
 		pc->local_isdst = 1;
 		pc->dsts_seen += (0 < (yyvsp[-1].intval)) + 1;
 	  }
-#line 1703 "sys-utils/hwclock-parse-date.c"
+#line 1715 "sys-utils/hwclock-parse-date.c"
     break;
 
   case 30: /* zone: tZONE  */
-#line 446 "sys-utils/hwclock-parse-date.y"
+#line 453 "sys-utils/hwclock-parse-date.y"
                 {
 		pc->time_zone = (yyvsp[0].intval);
 	  }
-#line 1711 "sys-utils/hwclock-parse-date.c"
+#line 1723 "sys-utils/hwclock-parse-date.c"
     break;
 
   case 31: /* zone: 'T'  */
-#line 449 "sys-utils/hwclock-parse-date.y"
+#line 456 "sys-utils/hwclock-parse-date.y"
               {
 		pc->time_zone = HOUR(7);
 	  }
-#line 1719 "sys-utils/hwclock-parse-date.c"
+#line 1731 "sys-utils/hwclock-parse-date.c"
     break;
 
   case 32: /* zone: tZONE relunit_snumber  */
-#line 452 "sys-utils/hwclock-parse-date.y"
+#line 459 "sys-utils/hwclock-parse-date.y"
                                 {
 		pc->time_zone = (yyvsp[-1].intval);
 		apply_relative_time (pc, (yyvsp[0].rel), 1);
 	  }
-#line 1728 "sys-utils/hwclock-parse-date.c"
+#line 1740 "sys-utils/hwclock-parse-date.c"
     break;
 
   case 33: /* zone: 'T' relunit_snumber  */
-#line 456 "sys-utils/hwclock-parse-date.y"
+#line 463 "sys-utils/hwclock-parse-date.y"
                               {
 		pc->time_zone = HOUR(7);
 		apply_relative_time (pc, (yyvsp[0].rel), 1);
 	  }
-#line 1737 "sys-utils/hwclock-parse-date.c"
+#line 1749 "sys-utils/hwclock-parse-date.c"
     break;
 
   case 34: /* zone: tZONE tSNUMBER o_colon_minutes  */
-#line 460 "sys-utils/hwclock-parse-date.y"
+#line 467 "sys-utils/hwclock-parse-date.y"
                                          {
 		if (! time_zone_hhmm (pc, (yyvsp[-1].textintval), (yyvsp[0].textintval))) YYABORT;
 		pc->time_zone += (yyvsp[-2].intval);
 	  }
-#line 1746 "sys-utils/hwclock-parse-date.c"
+#line 1758 "sys-utils/hwclock-parse-date.c"
     break;
 
   case 35: /* zone: tDAYZONE  */
-#line 464 "sys-utils/hwclock-parse-date.y"
+#line 471 "sys-utils/hwclock-parse-date.y"
                    {
 		pc->time_zone = (yyvsp[0].intval) + 60;
 	  }
-#line 1754 "sys-utils/hwclock-parse-date.c"
+#line 1766 "sys-utils/hwclock-parse-date.c"
     break;
 
   case 36: /* zone: tZONE tDST  */
-#line 467 "sys-utils/hwclock-parse-date.y"
+#line 474 "sys-utils/hwclock-parse-date.y"
                      {
 		pc->time_zone = (yyvsp[-1].intval) + 60;
 	  }
-#line 1762 "sys-utils/hwclock-parse-date.c"
+#line 1774 "sys-utils/hwclock-parse-date.c"
     break;
 
   case 37: /* day: tDAY  */
-#line 473 "sys-utils/hwclock-parse-date.y"
+#line 480 "sys-utils/hwclock-parse-date.y"
                {
 		pc->day_ordinal = 0;
 		pc->day_number = (yyvsp[0].intval);
 	  }
-#line 1771 "sys-utils/hwclock-parse-date.c"
+#line 1783 "sys-utils/hwclock-parse-date.c"
     break;
 
   case 38: /* day: tDAY ','  */
-#line 477 "sys-utils/hwclock-parse-date.y"
+#line 484 "sys-utils/hwclock-parse-date.y"
                    {
 		pc->day_ordinal = 0;
 		pc->day_number = (yyvsp[-1].intval);
 	  }
-#line 1780 "sys-utils/hwclock-parse-date.c"
+#line 1792 "sys-utils/hwclock-parse-date.c"
     break;
 
   case 39: /* day: tORDINAL tDAY  */
-#line 481 "sys-utils/hwclock-parse-date.y"
+#line 488 "sys-utils/hwclock-parse-date.y"
                         {
 		pc->day_ordinal = (yyvsp[-1].intval);
 		pc->day_number = (yyvsp[0].intval);
 	  }
-#line 1789 "sys-utils/hwclock-parse-date.c"
+#line 1801 "sys-utils/hwclock-parse-date.c"
     break;
 
   case 40: /* day: tUNUMBER tDAY  */
-#line 485 "sys-utils/hwclock-parse-date.y"
+#line 492 "sys-utils/hwclock-parse-date.y"
                         {
 		pc->day_ordinal = (yyvsp[-1].textintval).value;
 		pc->day_number = (yyvsp[0].intval);
 	  }
-#line 1798 "sys-utils/hwclock-parse-date.c"
+#line 1810 "sys-utils/hwclock-parse-date.c"
     break;
 
   case 41: /* date: tUNUMBER '/' tUNUMBER  */
-#line 492 "sys-utils/hwclock-parse-date.y"
+#line 499 "sys-utils/hwclock-parse-date.y"
                                 {
 		pc->month = (yyvsp[-2].textintval).value;
 		pc->day = (yyvsp[0].textintval).value;
 	  }
-#line 1807 "sys-utils/hwclock-parse-date.c"
+#line 1819 "sys-utils/hwclock-parse-date.c"
     break;
 
   case 42: /* date: tUNUMBER '/' tUNUMBER '/' tUNUMBER  */
-#line 496 "sys-utils/hwclock-parse-date.y"
+#line 503 "sys-utils/hwclock-parse-date.y"
                                              {
 	/**
 	 * Interpret as YYYY/MM/DD if the first value has 4 or more digits,
@@ -1826,11 +1838,11 @@ yyreduce:
 			pc->year = (yyvsp[0].textintval);
 		}
 	  }
-#line 1830 "sys-utils/hwclock-parse-date.c"
+#line 1842 "sys-utils/hwclock-parse-date.c"
     break;
 
   case 43: /* date: tUNUMBER tMONTH tSNUMBER  */
-#line 514 "sys-utils/hwclock-parse-date.y"
+#line 521 "sys-utils/hwclock-parse-date.y"
                                    {
 		/* e.g. 17-JUN-1992. */
 		pc->day = (yyvsp[-2].textintval).value;
@@ -1838,11 +1850,11 @@ yyreduce:
 		pc->year.value = -(yyvsp[0].textintval).value;
 		pc->year.digits = (yyvsp[0].textintval).digits;
 	  }
-#line 1842 "sys-utils/hwclock-parse-date.c"
+#line 1854 "sys-utils/hwclock-parse-date.c"
     break;
 
   case 44: /* date: tMONTH tSNUMBER tSNUMBER  */
-#line 521 "sys-utils/hwclock-parse-date.y"
+#line 528 "sys-utils/hwclock-parse-date.y"
                                    {
 		/* e.g. JUN-17-1992. */
 		pc->month = (yyvsp[-2].intval);
@@ -1850,266 +1862,266 @@ yyreduce:
 		pc->year.value = -(yyvsp[0].textintval).value;
 		pc->year.digits = (yyvsp[0].textintval).digits;
 	  }
-#line 1854 "sys-utils/hwclock-parse-date.c"
+#line 1866 "sys-utils/hwclock-parse-date.c"
     break;
 
   case 45: /* date: tMONTH tUNUMBER  */
-#line 528 "sys-utils/hwclock-parse-date.y"
+#line 535 "sys-utils/hwclock-parse-date.y"
                           {
 		pc->month = (yyvsp[-1].intval);
 		pc->day = (yyvsp[0].textintval).value;
 	  }
-#line 1863 "sys-utils/hwclock-parse-date.c"
+#line 1875 "sys-utils/hwclock-parse-date.c"
     break;
 
   case 46: /* date: tMONTH tUNUMBER ',' tUNUMBER  */
-#line 532 "sys-utils/hwclock-parse-date.y"
+#line 539 "sys-utils/hwclock-parse-date.y"
                                        {
 		pc->month = (yyvsp[-3].intval);
 		pc->day = (yyvsp[-2].textintval).value;
 		pc->year = (yyvsp[0].textintval);
 	  }
-#line 1873 "sys-utils/hwclock-parse-date.c"
+#line 1885 "sys-utils/hwclock-parse-date.c"
     break;
 
   case 47: /* date: tUNUMBER tMONTH  */
-#line 537 "sys-utils/hwclock-parse-date.y"
+#line 544 "sys-utils/hwclock-parse-date.y"
                           {
 		pc->day = (yyvsp[-1].textintval).value;
 		pc->month = (yyvsp[0].intval);
 	  }
-#line 1882 "sys-utils/hwclock-parse-date.c"
+#line 1894 "sys-utils/hwclock-parse-date.c"
     break;
 
   case 48: /* date: tUNUMBER tMONTH tUNUMBER  */
-#line 541 "sys-utils/hwclock-parse-date.y"
+#line 548 "sys-utils/hwclock-parse-date.y"
                                    {
 		pc->day = (yyvsp[-2].textintval).value;
 		pc->month = (yyvsp[-1].intval);
 		pc->year = (yyvsp[0].textintval);
 	  }
-#line 1892 "sys-utils/hwclock-parse-date.c"
+#line 1904 "sys-utils/hwclock-parse-date.c"
     break;
 
   case 50: /* iso_8601_date: tUNUMBER tSNUMBER tSNUMBER  */
-#line 550 "sys-utils/hwclock-parse-date.y"
+#line 557 "sys-utils/hwclock-parse-date.y"
                                      {
 		/* ISO 8601 format.YYYY-MM-DD. */
 		pc->year = (yyvsp[-2].textintval);
 		pc->month = -(yyvsp[-1].textintval).value;
 		pc->day = -(yyvsp[0].textintval).value;
 	  }
-#line 1903 "sys-utils/hwclock-parse-date.c"
-    break;
-
-  case 51: /* rel: relunit tAGO  */
-#line 560 "sys-utils/hwclock-parse-date.y"
-                { apply_relative_time (pc, (yyvsp[-1].rel), (yyvsp[0].intval)); }
-#line 1909 "sys-utils/hwclock-parse-date.c"
-    break;
-
-  case 52: /* rel: relunit  */
-#line 562 "sys-utils/hwclock-parse-date.y"
-                { apply_relative_time (pc, (yyvsp[0].rel), 1); }
 #line 1915 "sys-utils/hwclock-parse-date.c"
     break;
 
-  case 53: /* rel: dayshift  */
-#line 564 "sys-utils/hwclock-parse-date.y"
-                { apply_relative_time (pc, (yyvsp[0].rel), 1); }
+  case 51: /* rel: relunit tAGO  */
+#line 567 "sys-utils/hwclock-parse-date.y"
+                { apply_relative_time (pc, (yyvsp[-1].rel), (yyvsp[0].intval)); }
 #line 1921 "sys-utils/hwclock-parse-date.c"
     break;
 
-  case 54: /* relunit: tORDINAL tYEAR_UNIT  */
+  case 52: /* rel: relunit  */
 #line 569 "sys-utils/hwclock-parse-date.y"
-                { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).year = (yyvsp[-1].intval); }
+                { apply_relative_time (pc, (yyvsp[0].rel), 1); }
 #line 1927 "sys-utils/hwclock-parse-date.c"
     break;
 
-  case 55: /* relunit: tUNUMBER tYEAR_UNIT  */
+  case 53: /* rel: dayshift  */
 #line 571 "sys-utils/hwclock-parse-date.y"
-                { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).year = (yyvsp[-1].textintval).value; }
+                { apply_relative_time (pc, (yyvsp[0].rel), 1); }
 #line 1933 "sys-utils/hwclock-parse-date.c"
     break;
 
-  case 56: /* relunit: tYEAR_UNIT  */
-#line 573 "sys-utils/hwclock-parse-date.y"
-                { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).year = 1; }
+  case 54: /* relunit: tORDINAL tYEAR_UNIT  */
+#line 576 "sys-utils/hwclock-parse-date.y"
+                { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).year = (yyvsp[-1].intval); }
 #line 1939 "sys-utils/hwclock-parse-date.c"
     break;
 
-  case 57: /* relunit: tORDINAL tMONTH_UNIT  */
-#line 575 "sys-utils/hwclock-parse-date.y"
-                { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).month = (yyvsp[-1].intval); }
+  case 55: /* relunit: tUNUMBER tYEAR_UNIT  */
+#line 578 "sys-utils/hwclock-parse-date.y"
+                { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).year = (yyvsp[-1].textintval).value; }
 #line 1945 "sys-utils/hwclock-parse-date.c"
     break;
 
-  case 58: /* relunit: tUNUMBER tMONTH_UNIT  */
-#line 577 "sys-utils/hwclock-parse-date.y"
-                { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).month = (yyvsp[-1].textintval).value; }
+  case 56: /* relunit: tYEAR_UNIT  */
+#line 580 "sys-utils/hwclock-parse-date.y"
+                { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).year = 1; }
 #line 1951 "sys-utils/hwclock-parse-date.c"
     break;
 
-  case 59: /* relunit: tMONTH_UNIT  */
-#line 579 "sys-utils/hwclock-parse-date.y"
-                { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).month = 1; }
+  case 57: /* relunit: tORDINAL tMONTH_UNIT  */
+#line 582 "sys-utils/hwclock-parse-date.y"
+                { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).month = (yyvsp[-1].intval); }
 #line 1957 "sys-utils/hwclock-parse-date.c"
     break;
 
-  case 60: /* relunit: tORDINAL tDAY_UNIT  */
-#line 581 "sys-utils/hwclock-parse-date.y"
-                { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).day = (yyvsp[-1].intval) * (yyvsp[0].intval); }
+  case 58: /* relunit: tUNUMBER tMONTH_UNIT  */
+#line 584 "sys-utils/hwclock-parse-date.y"
+                { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).month = (yyvsp[-1].textintval).value; }
 #line 1963 "sys-utils/hwclock-parse-date.c"
     break;
 
-  case 61: /* relunit: tUNUMBER tDAY_UNIT  */
-#line 583 "sys-utils/hwclock-parse-date.y"
-                { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).day = (yyvsp[-1].textintval).value * (yyvsp[0].intval); }
+  case 59: /* relunit: tMONTH_UNIT  */
+#line 586 "sys-utils/hwclock-parse-date.y"
+                { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).month = 1; }
 #line 1969 "sys-utils/hwclock-parse-date.c"
     break;
 
-  case 62: /* relunit: tDAY_UNIT  */
-#line 585 "sys-utils/hwclock-parse-date.y"
-                { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).day = (yyvsp[0].intval); }
+  case 60: /* relunit: tORDINAL tDAY_UNIT  */
+#line 588 "sys-utils/hwclock-parse-date.y"
+                { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).day = (yyvsp[-1].intval) * (yyvsp[0].intval); }
 #line 1975 "sys-utils/hwclock-parse-date.c"
     break;
 
-  case 63: /* relunit: tORDINAL tHOUR_UNIT  */
-#line 587 "sys-utils/hwclock-parse-date.y"
-                { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).hour = (yyvsp[-1].intval); }
+  case 61: /* relunit: tUNUMBER tDAY_UNIT  */
+#line 590 "sys-utils/hwclock-parse-date.y"
+                { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).day = (yyvsp[-1].textintval).value * (yyvsp[0].intval); }
 #line 1981 "sys-utils/hwclock-parse-date.c"
     break;
 
-  case 64: /* relunit: tUNUMBER tHOUR_UNIT  */
-#line 589 "sys-utils/hwclock-parse-date.y"
-                { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).hour = (yyvsp[-1].textintval).value; }
+  case 62: /* relunit: tDAY_UNIT  */
+#line 592 "sys-utils/hwclock-parse-date.y"
+                { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).day = (yyvsp[0].intval); }
 #line 1987 "sys-utils/hwclock-parse-date.c"
     break;
 
-  case 65: /* relunit: tHOUR_UNIT  */
-#line 591 "sys-utils/hwclock-parse-date.y"
-                { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).hour = 1; }
+  case 63: /* relunit: tORDINAL tHOUR_UNIT  */
+#line 594 "sys-utils/hwclock-parse-date.y"
+                { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).hour = (yyvsp[-1].intval); }
 #line 1993 "sys-utils/hwclock-parse-date.c"
     break;
 
-  case 66: /* relunit: tORDINAL tMINUTE_UNIT  */
-#line 593 "sys-utils/hwclock-parse-date.y"
-                { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).minutes = (yyvsp[-1].intval); }
+  case 64: /* relunit: tUNUMBER tHOUR_UNIT  */
+#line 596 "sys-utils/hwclock-parse-date.y"
+                { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).hour = (yyvsp[-1].textintval).value; }
 #line 1999 "sys-utils/hwclock-parse-date.c"
     break;
 
-  case 67: /* relunit: tUNUMBER tMINUTE_UNIT  */
-#line 595 "sys-utils/hwclock-parse-date.y"
-                { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).minutes = (yyvsp[-1].textintval).value; }
+  case 65: /* relunit: tHOUR_UNIT  */
+#line 598 "sys-utils/hwclock-parse-date.y"
+                { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).hour = 1; }
 #line 2005 "sys-utils/hwclock-parse-date.c"
     break;
 
-  case 68: /* relunit: tMINUTE_UNIT  */
-#line 597 "sys-utils/hwclock-parse-date.y"
-                { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).minutes = 1; }
+  case 66: /* relunit: tORDINAL tMINUTE_UNIT  */
+#line 600 "sys-utils/hwclock-parse-date.y"
+                { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).minutes = (yyvsp[-1].intval); }
 #line 2011 "sys-utils/hwclock-parse-date.c"
     break;
 
-  case 69: /* relunit: tORDINAL tSEC_UNIT  */
-#line 599 "sys-utils/hwclock-parse-date.y"
-                { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).seconds = (yyvsp[-1].intval); }
+  case 67: /* relunit: tUNUMBER tMINUTE_UNIT  */
+#line 602 "sys-utils/hwclock-parse-date.y"
+                { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).minutes = (yyvsp[-1].textintval).value; }
 #line 2017 "sys-utils/hwclock-parse-date.c"
     break;
 
-  case 70: /* relunit: tUNUMBER tSEC_UNIT  */
-#line 601 "sys-utils/hwclock-parse-date.y"
-                { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).seconds = (yyvsp[-1].textintval).value; }
+  case 68: /* relunit: tMINUTE_UNIT  */
+#line 604 "sys-utils/hwclock-parse-date.y"
+                { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).minutes = 1; }
 #line 2023 "sys-utils/hwclock-parse-date.c"
     break;
 
+  case 69: /* relunit: tORDINAL tSEC_UNIT  */
+#line 606 "sys-utils/hwclock-parse-date.y"
+                { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).seconds = (yyvsp[-1].intval); }
+#line 2029 "sys-utils/hwclock-parse-date.c"
+    break;
+
+  case 70: /* relunit: tUNUMBER tSEC_UNIT  */
+#line 608 "sys-utils/hwclock-parse-date.y"
+                { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).seconds = (yyvsp[-1].textintval).value; }
+#line 2035 "sys-utils/hwclock-parse-date.c"
+    break;
+
   case 71: /* relunit: tSDECIMAL_NUMBER tSEC_UNIT  */
-#line 602 "sys-utils/hwclock-parse-date.y"
+#line 609 "sys-utils/hwclock-parse-date.y"
                                      {
 		(yyval.rel) = RELATIVE_TIME_0;
 		(yyval.rel).seconds = (yyvsp[-1].timespec).tv_sec;
 		(yyval.rel).ns = (yyvsp[-1].timespec).tv_nsec;
 	  }
-#line 2033 "sys-utils/hwclock-parse-date.c"
+#line 2045 "sys-utils/hwclock-parse-date.c"
     break;
 
   case 72: /* relunit: tUDECIMAL_NUMBER tSEC_UNIT  */
-#line 607 "sys-utils/hwclock-parse-date.y"
+#line 614 "sys-utils/hwclock-parse-date.y"
                                      {
 		(yyval.rel) = RELATIVE_TIME_0;
 		(yyval.rel).seconds = (yyvsp[-1].timespec).tv_sec;
 		(yyval.rel).ns = (yyvsp[-1].timespec).tv_nsec;
 	  }
-#line 2043 "sys-utils/hwclock-parse-date.c"
-    break;
-
-  case 73: /* relunit: tSEC_UNIT  */
-#line 613 "sys-utils/hwclock-parse-date.y"
-                { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).seconds = 1; }
-#line 2049 "sys-utils/hwclock-parse-date.c"
-    break;
-
-  case 75: /* relunit_snumber: tSNUMBER tYEAR_UNIT  */
-#line 619 "sys-utils/hwclock-parse-date.y"
-                { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).year = (yyvsp[-1].textintval).value; }
 #line 2055 "sys-utils/hwclock-parse-date.c"
     break;
 
-  case 76: /* relunit_snumber: tSNUMBER tMONTH_UNIT  */
-#line 621 "sys-utils/hwclock-parse-date.y"
-                { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).month = (yyvsp[-1].textintval).value; }
+  case 73: /* relunit: tSEC_UNIT  */
+#line 620 "sys-utils/hwclock-parse-date.y"
+                { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).seconds = 1; }
 #line 2061 "sys-utils/hwclock-parse-date.c"
     break;
 
-  case 77: /* relunit_snumber: tSNUMBER tDAY_UNIT  */
-#line 623 "sys-utils/hwclock-parse-date.y"
-                { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).day = (yyvsp[-1].textintval).value * (yyvsp[0].intval); }
+  case 75: /* relunit_snumber: tSNUMBER tYEAR_UNIT  */
+#line 626 "sys-utils/hwclock-parse-date.y"
+                { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).year = (yyvsp[-1].textintval).value; }
 #line 2067 "sys-utils/hwclock-parse-date.c"
     break;
 
-  case 78: /* relunit_snumber: tSNUMBER tHOUR_UNIT  */
-#line 625 "sys-utils/hwclock-parse-date.y"
-                { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).hour = (yyvsp[-1].textintval).value; }
+  case 76: /* relunit_snumber: tSNUMBER tMONTH_UNIT  */
+#line 628 "sys-utils/hwclock-parse-date.y"
+                { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).month = (yyvsp[-1].textintval).value; }
 #line 2073 "sys-utils/hwclock-parse-date.c"
     break;
 
-  case 79: /* relunit_snumber: tSNUMBER tMINUTE_UNIT  */
-#line 627 "sys-utils/hwclock-parse-date.y"
-                { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).minutes = (yyvsp[-1].textintval).value; }
+  case 77: /* relunit_snumber: tSNUMBER tDAY_UNIT  */
+#line 630 "sys-utils/hwclock-parse-date.y"
+                { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).day = (yyvsp[-1].textintval).value * (yyvsp[0].intval); }
 #line 2079 "sys-utils/hwclock-parse-date.c"
     break;
 
-  case 80: /* relunit_snumber: tSNUMBER tSEC_UNIT  */
-#line 629 "sys-utils/hwclock-parse-date.y"
-                { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).seconds = (yyvsp[-1].textintval).value; }
+  case 78: /* relunit_snumber: tSNUMBER tHOUR_UNIT  */
+#line 632 "sys-utils/hwclock-parse-date.y"
+                { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).hour = (yyvsp[-1].textintval).value; }
 #line 2085 "sys-utils/hwclock-parse-date.c"
     break;
 
-  case 81: /* dayshift: tDAY_SHIFT  */
+  case 79: /* relunit_snumber: tSNUMBER tMINUTE_UNIT  */
 #line 634 "sys-utils/hwclock-parse-date.y"
-                { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).day = (yyvsp[0].intval); }
+                { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).minutes = (yyvsp[-1].textintval).value; }
 #line 2091 "sys-utils/hwclock-parse-date.c"
     break;
 
-  case 85: /* signed_seconds: tSNUMBER  */
-#line 642 "sys-utils/hwclock-parse-date.y"
-                { (yyval.timespec).tv_sec = (yyvsp[0].textintval).value; (yyval.timespec).tv_nsec = 0; }
+  case 80: /* relunit_snumber: tSNUMBER tSEC_UNIT  */
+#line 636 "sys-utils/hwclock-parse-date.y"
+                { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).seconds = (yyvsp[-1].textintval).value; }
 #line 2097 "sys-utils/hwclock-parse-date.c"
     break;
 
-  case 87: /* unsigned_seconds: tUNUMBER  */
-#line 648 "sys-utils/hwclock-parse-date.y"
-                { (yyval.timespec).tv_sec = (yyvsp[0].textintval).value; (yyval.timespec).tv_nsec = 0; }
+  case 81: /* dayshift: tDAY_SHIFT  */
+#line 641 "sys-utils/hwclock-parse-date.y"
+                { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).day = (yyvsp[0].intval); }
 #line 2103 "sys-utils/hwclock-parse-date.c"
     break;
 
-  case 88: /* number: tUNUMBER  */
-#line 653 "sys-utils/hwclock-parse-date.y"
-                { digits_to_date_time (pc, (yyvsp[0].textintval)); }
+  case 85: /* signed_seconds: tSNUMBER  */
+#line 649 "sys-utils/hwclock-parse-date.y"
+                { (yyval.timespec).tv_sec = (yyvsp[0].textintval).value; (yyval.timespec).tv_nsec = 0; }
 #line 2109 "sys-utils/hwclock-parse-date.c"
     break;
 
+  case 87: /* unsigned_seconds: tUNUMBER  */
+#line 655 "sys-utils/hwclock-parse-date.y"
+                { (yyval.timespec).tv_sec = (yyvsp[0].textintval).value; (yyval.timespec).tv_nsec = 0; }
+#line 2115 "sys-utils/hwclock-parse-date.c"
+    break;
+
+  case 88: /* number: tUNUMBER  */
+#line 660 "sys-utils/hwclock-parse-date.y"
+                { digits_to_date_time (pc, (yyvsp[0].textintval)); }
+#line 2121 "sys-utils/hwclock-parse-date.c"
+    break;
+
   case 89: /* hybrid: tUNUMBER relunit_snumber  */
-#line 657 "sys-utils/hwclock-parse-date.y"
+#line 664 "sys-utils/hwclock-parse-date.y"
                                    {
 		/**
 		 * Hybrid all-digit and relative offset, so that we accept e.g.,
@@ -2118,25 +2130,25 @@ yyreduce:
 		digits_to_date_time (pc, (yyvsp[-1].textintval));
 		apply_relative_time (pc, (yyvsp[0].rel), 1);
 	  }
-#line 2122 "sys-utils/hwclock-parse-date.c"
+#line 2134 "sys-utils/hwclock-parse-date.c"
     break;
 
   case 90: /* o_colon_minutes: %empty  */
-#line 669 "sys-utils/hwclock-parse-date.y"
+#line 676 "sys-utils/hwclock-parse-date.y"
                 { (yyval.textintval).value = (yyval.textintval).digits = 0; }
-#line 2128 "sys-utils/hwclock-parse-date.c"
+#line 2140 "sys-utils/hwclock-parse-date.c"
     break;
 
   case 91: /* o_colon_minutes: ':' tUNUMBER  */
-#line 670 "sys-utils/hwclock-parse-date.y"
+#line 677 "sys-utils/hwclock-parse-date.y"
                        {
 		(yyval.textintval) = (yyvsp[0].textintval);
 	  }
-#line 2136 "sys-utils/hwclock-parse-date.c"
+#line 2148 "sys-utils/hwclock-parse-date.c"
     break;
 
 
-#line 2140 "sys-utils/hwclock-parse-date.c"
+#line 2152 "sys-utils/hwclock-parse-date.c"
 
       default: break;
     }
@@ -2218,6 +2230,7 @@ yyerrorlab:
      label yyerrorlab therefore never appears in user code.  */
   if (0)
     YYERROR;
+  ++yynerrs;
 
   /* Do not reclaim the symbols of the rule whose action triggered
      this YYERROR.  */
@@ -2278,7 +2291,7 @@ yyerrlab1:
 `-------------------------------------*/
 yyacceptlab:
   yyresult = 0;
-  goto yyreturn;
+  goto yyreturnlab;
 
 
 /*-----------------------------------.
@@ -2286,24 +2299,22 @@ yyacceptlab:
 `-----------------------------------*/
 yyabortlab:
   yyresult = 1;
-  goto yyreturn;
+  goto yyreturnlab;
 
 
-#if !defined yyoverflow
-/*-------------------------------------------------.
-| yyexhaustedlab -- memory exhaustion comes here.  |
-`-------------------------------------------------*/
+/*-----------------------------------------------------------.
+| yyexhaustedlab -- YYNOMEM (memory exhaustion) comes here.  |
+`-----------------------------------------------------------*/
 yyexhaustedlab:
   yyerror (pc, YY_("memory exhausted"));
   yyresult = 2;
-  goto yyreturn;
-#endif
+  goto yyreturnlab;
 
 
-/*-------------------------------------------------------.
-| yyreturn -- parsing is finished, clean up and return.  |
-`-------------------------------------------------------*/
-yyreturn:
+/*----------------------------------------------------------.
+| yyreturnlab -- parsing is finished, clean up and return.  |
+`----------------------------------------------------------*/
+yyreturnlab:
   if (yychar != YYEMPTY)
     {
       /* Make sure we have latest lookahead translation.  See comments at
@@ -2330,7 +2341,7 @@ yyreturn:
   return yyresult;
 }
 
-#line 675 "sys-utils/hwclock-parse-date.y"
+#line 682 "sys-utils/hwclock-parse-date.y"
 
 
 static table const meridian_table[] = {

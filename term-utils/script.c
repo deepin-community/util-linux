@@ -678,7 +678,7 @@ static int callback_log_stream_activity(void *data, int fd, char *buf, size_t bu
 	if (ssz < 0)
 		return (int) ssz;
 
-	DBG(IO, ul_debug(" append %ld bytes [summary=%zu, max=%zu]", ssz,
+	DBG(IO, ul_debug(" append %zd bytes [summary=%" PRIu64 ", max=%" PRIu64 "]", ssz,
 				ctl->outsz, ctl->maxsz));
 
 	ctl->outsz += ssz;
@@ -889,15 +889,24 @@ int main(int argc, char **argv)
 
 	/* default if no --log-* specified */
 	if (!outfile && !infile) {
-		if (argc > 0)
+		if (argc > 0) {
 			outfile = argv[0];
-		else {
+			argc--;
+			argv++;
+		} else {
 			die_if_link(&ctl, DEFAULT_TYPESCRIPT_FILENAME);
 			outfile = DEFAULT_TYPESCRIPT_FILENAME;
 		}
 
 		/* associate stdout with typescript file */
 		log_associate(&ctl, &ctl.out, outfile, SCRIPT_FMT_RAW);
+	}
+
+	if (argc > 0) {
+		/* only one filename is accepted. if --log-out was given,
+		 * freestanding filename is ignored */
+		warnx(_("unexpected number of arguments"));
+		errtryhelp(EXIT_FAILURE);
 	}
 
 	if (timingfile) {
@@ -947,13 +956,16 @@ int main(int argc, char **argv)
 		printf(_(".\n"));
 	}
 
-#ifdef HAVE_LIBUTEMPTER
-	utempter_add_record(ul_pty_get_childfd(ctl.pty), NULL);
-#endif
 
 	if (ul_pty_setup(ctl.pty))
 		err(EXIT_FAILURE, _("failed to create pseudo-terminal"));
 
+#ifdef HAVE_LIBUTEMPTER
+	utempter_add_record(ul_pty_get_childfd(ctl.pty), NULL);
+#endif
+
+	if (ul_pty_signals_setup(ctl.pty))
+		err(EXIT_FAILURE, _("failed to initialize signals handler"));
 	fflush(stdout);
 
 	/*
