@@ -48,6 +48,10 @@ The default list of columns may be extended if _list_ is specified in the format
 *--output-all*::
 Output all available columns.
 
+*-P*, *--persistent*::
+Display only the namespaces without processes (aka persistent namespaces), created by bind mounting
+/proc/pid/ns/type files to a filesystem path.
+
 *-p*, *--task* _PID_::
 Display only the namespaces held by the process with this _PID_.
 
@@ -68,6 +72,17 @@ Use tree-like output format. If *process* is given as _rel_, print process tree(
 
 include::man-common/help-version.adoc[]
 
+== EXIT STATUS
+
+The *lsns* utility exits with one of the following values:
+
+*0*::
+Success.
+*1*::
+General error.
+*2*::
+An ioctl was unknown to the kernel.
+
 == AUTHORS
 
 mailto:kzak@redhat.com[Karel Zak]
@@ -78,7 +93,8 @@ mailto:kzak@redhat.com[Karel Zak]
 *unshare*(1),
 *clone*(2),
 *namespaces*(7),
-*ioctl_ns*(2)
+*ioctl_ns*(2),
+*ip-netns*(8)
 
 include::man-common/bugreports.adoc[]
 

@@ -291,7 +291,7 @@ static struct path_cxt *zram_get_control(void)
 
 static int zram_control_add(struct zram *z)
 {
-	int n;
+	int n = 0;
 	struct path_cxt *ctl;
 
 	if (!zram_has_control(z) || !(ctl = zram_get_control()))
@@ -566,6 +566,7 @@ static void __attribute__((__noreturn__)) usage(void)
 
 	fputs(_(" <alg> specify algorithm, supported are:\n"), out);
 	fputs(_("   lzo, lz4, lz4hc, deflate, 842 and zstd\n"), out);
+	fputs(_("   (List may be inaccurate, consult man page.)\n"), out);
 
 	fputs(USAGE_COLUMNS, out);
 	for (i = 0; i < ARRAY_SIZE(infos); i++)
