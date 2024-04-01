@@ -1,3 +1,21 @@
+util-linux (2.39.3-6deepin1) unstable; urgency=medium
+
+  This upload matches 2.39.3-11 in Debian unstable.
+
+  Cherry-pick changes from Debian to avoid time_t transition:
+
+  [ Johannes Schauer Marin Rodrigues ]
+  * util-linux.postinst: avoid running uname in maintainer script for
+    chrootless hurd support (Closes: #1063638)
+
+  [ Chris Hofstaedtler ]
+  * Run wrap-and-sort -kas
+  * Tighten dependencies between programs and our own shlibs
+  * Apply upstream patch fixing CVE-2024-28085
+  * No longer install wall, write setgid tty
+
+ -- Tianyu Chen <sweetyfish@deepin.org>  Mon, 01 Apr 2024 14:02:31 +0800
+
 util-linux (2.39.3-6) unstable; urgency=medium
 
   * Upload to unstable.
