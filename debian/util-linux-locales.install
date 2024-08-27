@@ -53,8 +53,6 @@ debian/tmp/usr/share/man/*/man1/ionice.1 <!nodoc>                          [linu
 debian/tmp/usr/share/man/*/man1/ipcmk.1 <!nodoc>
 debian/tmp/usr/share/man/*/man1/ipcrm.1 <!nodoc>
 debian/tmp/usr/share/man/*/man1/ipcs.1 <!nodoc>
-debian/tmp/usr/share/man/*/man1/last.1 <!nodoc>
-debian/tmp/usr/share/man/*/man1/lastb.1 <!nodoc>
 debian/tmp/usr/share/man/*/man1/lscpu.1 <!nodoc>                           [linux-any]
 debian/tmp/usr/share/man/*/man1/lsipc.1 <!nodoc>                           [linux-any]
 debian/tmp/usr/share/man/*/man1/lslogins.1 <!nodoc>
@@ -65,7 +63,6 @@ debian/tmp/usr/share/man/*/man1/more.1 <!nodoc>                            [linu
 debian/tmp/usr/share/man/*/man1/mountpoint.1 <!nodoc>
 debian/tmp/usr/share/man/*/man1/namei.1 <!nodoc>
 debian/tmp/usr/share/man/*/man1/nsenter.1 <!nodoc>                         [linux-any]
-debian/tmp/usr/share/man/*/man1/prlimit.1 <!nodoc>                         [linux-any]
 debian/tmp/usr/share/man/de/man1/rename.1 => /usr/share/man/de/man1/rename.ul.1 <!nodoc>
 debian/tmp/usr/share/man/fr/man1/rename.1 => /usr/share/man/fr/man1/rename.ul.1 <!nodoc>
 debian/tmp/usr/share/man/sr/man1/rename.1 => /usr/share/man/sr/man1/rename.ul.1 <!nodoc>
@@ -76,14 +73,12 @@ debian/tmp/usr/share/man/*/man1/setpriv.1 <!nodoc>                         [linu
 debian/tmp/usr/share/man/*/man1/setsid.1 <!nodoc>
 debian/tmp/usr/share/man/*/man1/setterm.1 <!nodoc>                         [linux-any]
 debian/tmp/usr/share/man/*/man1/su.1 <!nodoc>
-debian/tmp/usr/share/man/*/man1/taskset.1 <!nodoc>                         [linux-any]
 debian/tmp/usr/share/man/*/man1/uclampset.1 <!nodoc>                       [linux-any]
 debian/tmp/usr/share/man/*/man1/unshare.1 <!nodoc>                         [linux-any]
 debian/tmp/usr/share/man/*/man1/utmpdump.1 <!nodoc>
 debian/tmp/usr/share/man/*/man1/whereis.1 <!nodoc>
 debian/tmp/usr/share/man/*/man5/adjtime_config.5 <!nodoc>
 debian/tmp/usr/share/man/*/man5/terminal-colors.d.5 <!nodoc>
-debian/tmp/usr/share/man/*/man8/addpart.8 <!nodoc>                         [linux-any]
 debian/tmp/usr/share/man/*/man8/agetty.8 <!nodoc>
 debian/tmp/usr/share/man/*/man8/blkdiscard.8 <!nodoc>                      [linux-any]
 debian/tmp/usr/share/man/*/man8/blkid.8 <!nodoc>
@@ -92,7 +87,6 @@ debian/tmp/usr/share/man/*/man8/blockdev.8 <!nodoc>                        [linu
 debian/tmp/usr/share/man/*/man8/chcpu.8 <!nodoc>                           [linux-any]
 debian/tmp/usr/share/man/*/man8/chmem.8 <!nodoc>                           [linux-any]
 debian/tmp/usr/share/man/*/man8/ctrlaltdel.8 <!nodoc>                      [linux-any]
-debian/tmp/usr/share/man/*/man8/delpart.8 <!nodoc>                         [linux-any]
 debian/tmp/usr/share/man/*/man8/findfs.8 <!nodoc>
 debian/tmp/usr/share/man/*/man8/findmnt.8 <!nodoc>
 debian/tmp/usr/share/man/*/man8/fsck.8 <!nodoc>
@@ -120,14 +114,13 @@ debian/tmp/usr/share/man/*/man8/rtcwake.8 <!nodoc>                         [linu
 debian/tmp/usr/share/man/*/man8/setarch.8 <!nodoc>                         [linux-any]
 debian/tmp/usr/share/man/*/man8/sulogin.8 <!nodoc>
 debian/tmp/usr/share/man/*/man8/swaplabel.8 <!nodoc>
-debian/tmp/usr/share/man/*/man8/switch_root.8 <!nodoc>                     [linux-any]
 debian/tmp/usr/share/man/*/man8/wdctl.8 <!nodoc>                           [linux-any]
 debian/tmp/usr/share/man/*/man8/wipefs.8 <!nodoc>
 debian/tmp/usr/share/man/*/man8/zramctl.8 <!nodoc>                         [linux-any]
 
 # util-linux-extra
+debian/tmp/usr/share/man/*/man1/enosys.1 <!nodoc>                          [linux-any]
 debian/tmp/usr/share/man/*/man1/fincore.1 <!nodoc>                         [linux-any]
-debian/tmp/usr/share/man/*/man1/lsfd.1 <!nodoc>                            [linux-any]
 debian/tmp/usr/share/man/*/man1/lsirq.1 <!nodoc>                           [linux-any]
 debian/tmp/usr/share/man/*/man1/waitpid.1 <!nodoc>                         [linux-any]
 debian/tmp/usr/share/man/*/man8/blkpr.8 <!nodoc>                           [linux-any]

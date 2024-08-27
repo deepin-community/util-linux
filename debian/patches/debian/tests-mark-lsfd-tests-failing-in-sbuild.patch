@@ -1,0 +1,22 @@
+From: Chris Hofstaedtler <zeha@debian.org>
+Date: Thu, 29 Feb 2024 23:22:41 +0100
+Subject: tests: mark lsfd mkfds-socketpair as failing in sbuild
+
+---
+ tests/ts/lsfd/mkfds-socketpair | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/tests/ts/lsfd/mkfds-socketpair b/tests/ts/lsfd/mkfds-socketpair
+index 3ef60c7..b1003e9 100755
+--- a/tests/ts/lsfd/mkfds-socketpair
++++ b/tests/ts/lsfd/mkfds-socketpair
+@@ -27,6 +27,9 @@ ts_check_test_command "$TS_HELPER_MKFDS"
+ 
+ ts_check_prog "sed"
+ 
++# fails for unknown reasons in sbuild, https://github.com/util-linux/util-linux/issues/2822
++TS_KNOWN_FAIL="yes"
++
+ ts_cd "$TS_OUTDIR"
+ 
+ lsfd_check_sockdiag "unix"

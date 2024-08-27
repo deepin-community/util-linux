@@ -546,9 +546,10 @@ static int do_mount(struct libmnt_context *cxt, const char *try_type)
 		cxt->syscall_status = 0;
 	}
 
-	if (org_type && rc != 0)
+	if (org_type && rc != 0) {
 		__mnt_fs_set_fstype_ptr(cxt->fs, org_type);
-	org_type  = NULL;
+		org_type  = NULL;
+	}
 
 	if (rc == 0 && try_type && cxt->update) {
 		struct libmnt_fs *fs = mnt_update_get_fs(cxt->update);
@@ -1571,6 +1572,12 @@ int mnt_context_get_mount_excode(
 	 */
 	syserr = mnt_context_get_syscall_errno(cxt);
 
+	if (buf && cxt->syscall_errmsg) {
+		snprintf(buf, bufsz, _("%s system call failed: %s"),
+					cxt->syscall_name ? : "mount",
+					cxt->syscall_errmsg);
+		return MNT_EX_FAIL;
+	}
 
 	switch(syserr) {
 	case EPERM:
@@ -1617,10 +1624,8 @@ int mnt_context_get_mount_excode(
 				return MNT_EX_SUCCESS;
 			if (buf)
 				snprintf(buf, bufsz, _("special device %s does not exist"), src);
-		} else if (buf) {
-			errno = syserr;
-			snprintf(buf, bufsz, _("mount(2) system call failed: %m"));
-		}
+		} else
+			goto generic_error;
 		break;
 
 	case ENOTDIR:
@@ -1633,10 +1638,8 @@ int mnt_context_get_mount_excode(
 			if (buf)
 				snprintf(buf, bufsz, _("special device %s does not exist "
 					 "(a path prefix is not a directory)"), src);
-		} else if (buf) {
-			errno = syserr;
-			snprintf(buf, bufsz, _("mount(2) system call failed: %m"));
-		}
+		} else
+			goto generic_error;
 		break;
 
 	case EINVAL:
@@ -1717,10 +1720,8 @@ int mnt_context_get_mount_excode(
 			snprintf(buf, bufsz, _("cannot remount %s read-write, is write-protected"), src);
 		else if (mflags & MS_BIND)
 			snprintf(buf, bufsz, _("bind %s failed"), src);
-		else {
-			errno = syserr;
-			snprintf(buf, bufsz, _("mount(2) system call failed: %m"));
-		}
+		else
+			goto generic_error;
 		break;
 
 	case ENOMEDIUM:
@@ -1740,9 +1741,11 @@ int mnt_context_get_mount_excode(
 		/* fallthrough */
 
 	default:
+	generic_error:
 		if (buf) {
 			errno = syserr;
-			snprintf(buf, bufsz, _("mount(2) system call failed: %m"));
+			snprintf(buf, bufsz, _("%s system call failed: %m"),
+					cxt->syscall_name ? : "mount");
 		}
 		break;
 	}
@@ -1752,7 +1755,8 @@ int mnt_context_get_mount_excode(
 
 #ifdef TEST_PROGRAM
 
-static int test_perms(struct libmnt_test *ts, int argc, char *argv[])
+static int test_perms(struct libmnt_test *ts __attribute__((unused)),
+		      int argc, char *argv[])
 {
 	struct libmnt_context *cxt;
 	struct libmnt_optlist *ls;
@@ -1795,7 +1799,8 @@ static int test_perms(struct libmnt_test *ts, int argc, char *argv[])
 	return 0;
 }
 
-static int test_fixopts(struct libmnt_test *ts, int argc, char *argv[])
+static int test_fixopts(struct libmnt_test *ts __attribute__((unused)),
+			int argc, char *argv[])
 {
 	struct libmnt_context *cxt;
 	struct libmnt_optlist *ls;
