@@ -1,0 +1,33 @@
+From: Maks Mishin <maks.mishinFZ@gmail.com>
+Date: Thu, 10 Oct 2024 20:23:49 +0300
+Subject: sys-utils: (setpriv): fix potential memory leak
+
+Dynamic memory, referenced by 'buf' is allocated by calling function 'xstrdup'
+add then changed by calling of strsep function.
+The free(buf) call is incorrect if buf != NULL, and points to some
+place inside or outside the source string.
+---
+ sys-utils/setpriv.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/sys-utils/setpriv.c b/sys-utils/setpriv.c
+index 3afdd0f..f53f419 100644
+--- a/sys-utils/setpriv.c
++++ b/sys-utils/setpriv.c
+@@ -558,6 +558,7 @@ static void do_caps(enum cap_type type, const char *caps)
+ static void parse_securebits(struct privctx *opts, const char *arg)
+ {
+ 	char *buf = xstrdup(arg);
++	char *source_buf = buf;
+ 	char *c;
+ 
+ 	opts->have_securebits = 1;
+@@ -611,7 +612,7 @@ static void parse_securebits(struct privctx *opts, const char *arg)
+ 
+ 	opts->securebits |= SECBIT_KEEP_CAPS;	/* We need it, and it's reset on exec */
+ 
+-	free(buf);
++	free(source_buf);
+ }
+ 
+ static void do_selinux_label(const char *label)

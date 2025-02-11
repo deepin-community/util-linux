@@ -1,0 +1,55 @@
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas@t-8ch.de>
+Date: Mon, 3 Feb 2025 21:46:13 +0100
+Subject: lib/colors: fix fallback to system directory
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+
+The current check relies on "*sfile" to recognize if a configuration has
+been found in the current directory. However this condition is only true
+for "type == UL_COLORFILE_SCHEME", breaking the .enable and .disable
+configurations.
+Instead reorder the logic a bit so that any valid configuration returns
+rc == 0.
+
+Reported-by: Axel <axel.scheepers76@gmail.com>
+Link: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1094283
+Reported-by: Chris Hofstaedtler <zeha@debian.org>
+Link: https://lore.kernel.org/util-linux/Z5a08yD10L1J8AIa@per.namespace.at/
+Tested-by: Chris Hofstaedtler <zeha@debian.org>
+Fixes: 4bdf22803f9a ("lib/colors: ensure fallback to system directory")
+Signed-off-by: Thomas Weißschuh <thomas@t-8ch.de>
+---
+ lib/colors.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/lib/colors.c b/lib/colors.c
+index 0928770..bf24a44 100644
+--- a/lib/colors.c
++++ b/lib/colors.c
+@@ -246,7 +246,7 @@ static int filename_to_tokens(const char *str,
+ static int colors_readdir(struct ul_color_ctl *cc, const char *dirname)
+ {
+ 	DIR *dir;
+-	int rc = 0;
++	int rc = -ENOENT;
+ 	struct dirent *d;
+ 	char sfile[PATH_MAX] = { '\0' };
+ 	size_t namesz, termsz;
+@@ -312,6 +312,7 @@ static int colors_readdir(struct ul_color_ctl *cc, const char *dirname)
+ 					type == UL_COLORFILE_ENABLE ? "enable" : "???",
+ 					cc->scores[type], score));
+ 		cc->scores[type] = score;
++		rc = 0;
+ 		if (type == UL_COLORFILE_SCHEME)
+ 			strncpy(sfile, d->d_name, sizeof(sfile));
+ 	}
+@@ -320,8 +321,6 @@ static int colors_readdir(struct ul_color_ctl *cc, const char *dirname)
+ 		sfile[sizeof(sfile) - 1] = '\0';
+ 		if (asprintf(&cc->sfile, "%s/%s", dirname, sfile) <= 0)
+ 			rc = -ENOMEM;
+-	} else {
+-		rc = -ENOENT;
+ 	}
+ 
+ 	closedir(dir);

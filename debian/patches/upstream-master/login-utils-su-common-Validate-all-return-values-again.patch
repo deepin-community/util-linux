@@ -1,0 +1,31 @@
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas@t-8ch.de>
+Date: Wed, 25 Sep 2024 08:12:45 +0200
+Subject: login-utils/su-common: Validate all return values again
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+
+The additional coded added in commit
+d6564701e812 ("login-utils/su-common: Check that the user didn't change during PAM transaction")
+was inserted in between the assignment and tests of "rc",
+making the return value unchecked.
+Add a new explicit check.
+
+Signed-off-by: Thomas Weißschuh <thomas@t-8ch.de>
+---
+ login-utils/su-common.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/login-utils/su-common.c b/login-utils/su-common.c
+index dc7b1d9..49f8457 100644
+--- a/login-utils/su-common.c
++++ b/login-utils/su-common.c
+@@ -424,6 +424,8 @@ static void supam_authenticate(struct su_context *su)
+ 	rc = pam_acct_mgmt(su->pamh, 0);
+ 	if (rc == PAM_NEW_AUTHTOK_REQD)
+ 		rc = pam_chauthtok(su->pamh, PAM_CHANGE_EXPIRED_AUTHTOK);
++	if (is_pam_failure(rc))
++		goto done;
+ 
+ 	rc = pam_get_item(su->pamh, PAM_USER, (const void **) &pam_user);
+ 	if (is_pam_failure(rc))

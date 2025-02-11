@@ -1,0 +1,201 @@
+From: Anjali K <anjalik@linux.ibm.com>
+Date: Mon, 4 Nov 2024 12:02:26 +0530
+Subject: lscpu: fix incorrect number of sockets during hotplug
+
+lscpu sometimes shows incorrect 'Socket(s)' value if a hotplug operation
+is running.
+On a 32 CPU 2-socket system, the expected output is as shown below:
+Architecture:           	      ppc64le
+Byte Order:             	      Little Endian
+CPU(s):                  	      32
+On-line CPU(s) list:   		      0-31
+Model name:               	      POWER10 (architected), altivec supported
+Model:                  	      2.0 (pvr 0080 0200)
+Thread(s) per core:     	      8
+Core(s) per socket:     	      2
+Socket(s):              	      2
+
+On the same system, if hotplug is running along with lscpu, it shows
+"Socket(s):" as 3 and 4 incorrectly sometimes.
+Architecture:                         ppc64le
+Byte Order:                           Little Endian
+CPU(s):                               32
+On-line CPU(s) list:                  0-11,16-31
+Off-line CPU(s) list:                 12-15
+Model name:                           POWER10 (architected), altivec supported
+Model:                                2.0 (pvr 0080 0200)
+Thread(s) per core:                   8
+Core(s) per socket:                   1
+Socket(s):                            3
+
+The number of sockets is considered as the number of unique core_siblings
+CPU groups. The issues causing the number of sockets to sometimes be
+higher during hotplug is:
+1. The core_siblings of CPUs on the same socket are different because a CPU
+on the socket has been onlined/offlined in between. In the below example,
+nr sockets was wrongly incremented for CPU 5 though CPU 4 and 5 are on the
+same socket because their core_siblings was different as CPU 12 was onlined
+in between.
+CPU: 4
+core_siblings: ff f0 0 0 0 0 0 0
+CPU: 5
+core_siblings: ff f8 0 0 0 0 0 0
+
+2. The core_siblings file of a CPU is created when a CPU is onlined. It may
+have an invalid value for some time until the online operation is fully
+complete. In the below example, nr sockets is wrongly incremented because
+the core_siblings of CPU 14 was 0 as it had just been onlined.
+CPU: 14
+core_siblings: 0 0 0 0 0 0 0 0
+
+To fix this, make the below changes:
+1. Instead of considering CPUs to be on different sockets if their
+core_siblings masks are unequal, consider them to be on different sockets
+only if their core_siblings masks don't have even one common CPU. Then CPUs
+on the same socket will be correctly identified even if offline/online
+operations happen while they are read if at least one CPU in the socket is
+online during both reads.
+2. Check if a CPU's hotplug operation has been completed before using its
+core_siblings file
+
+[kzak@redhat.com: - use xmalloc(),
+                  - use ul_strtos32(),
+                  - use err() on CPU_ALLOC() error]
+
+Reported-by: Anushree Mathur <anushree.mathur@linux.vnet.ibm.com>
+Signed-off-by: Anjali K <anjalik@linux.ibm.com>
+Signed-off-by: Karel Zak <kzak@redhat.com>
+---
+ sys-utils/lscpu-topology.c | 68 +++++++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 61 insertions(+), 7 deletions(-)
+
+diff --git a/sys-utils/lscpu-topology.c b/sys-utils/lscpu-topology.c
+index e3742e3..547a3ac 100644
+--- a/sys-utils/lscpu-topology.c
++++ b/sys-utils/lscpu-topology.c
+@@ -17,19 +17,25 @@
+ #include <unistd.h>
+ #include <string.h>
+ #include <stdio.h>
++#include <ctype.h>
+ 
+ #include "lscpu.h"
+ 
+ /* add @set to the @ary, unnecessary set is deallocated. */
+-static int add_cpuset_to_array(cpu_set_t **ary, size_t *items, cpu_set_t *set, size_t setsize)
++static int add_cpuset_to_array(cpu_set_t **ary, size_t *items, cpu_set_t *set, size_t setsize, cpu_set_t *common_cpus_set)
+ {
+ 	size_t i;
+ 
+ 	if (!ary)
+ 		return -EINVAL;
+ 
++	/*
++	 * Check if @set has no cpu in common with the cpusets
++	 * saved in @ary and if so append @set to @ary.
++	 */
+ 	for (i = 0; i < *items; i++) {
+-		if (CPU_EQUAL_S(setsize, set, ary[i]))
++		CPU_AND_S(setsize, common_cpus_set, set, ary[i]);
++		if (CPU_COUNT_S(setsize, common_cpus_set))
+ 			break;
+ 	}
+ 	if (i == *items) {
+@@ -98,14 +104,46 @@ void lscpu_sort_caches(struct lscpu_cache *caches, size_t n)
+ 		qsort(caches, n, sizeof(struct lscpu_cache), cmp_cache);
+ }
+ 
++/*
++ * Get the hotplug state number representing a completely online
++ * cpu from /sys/devices/system/cpu/hotplug/state
++ */
++static int get_online_state(struct path_cxt *sys)
++{
++	int hp_online_state_val = 0, page_size, rc;
++	char *buf, *strp;
++
++	hp_online_state_val = -1;
++
++	/* sysfs text files have size = page size */
++	page_size = getpagesize();
++
++	buf = (char *)xmalloc(page_size);
++	rc = ul_path_readf_buffer(sys, buf, page_size, "hotplug/states");
++	if (rc <= 0)
++		goto done;
++
++	strp = strstr(buf, ": online");
++	if (!strp)
++		goto done;
++
++	strp--; /* get digits before ': online' */
++	while (strp >= buf && isdigit(*strp))
++		strp--;
++	ul_strtos32(strp + 1, &hp_online_state_val, 10);
++done:
++	free(buf);
++	return hp_online_state_val;
++}
+ 
+ /* Read topology for specified type */
+ static int cputype_read_topology(struct lscpu_cxt *cxt, struct lscpu_cputype *ct)
+ {
+ 	size_t i, npos;
+ 	struct path_cxt *sys;
+-	int nthreads = 0, sw_topo = 0;
++	int nthreads = 0, sw_topo = 0, rc, hp_state, hp_online_state;
+ 	FILE *fd;
++	cpu_set_t *temp_set;
+ 
+ 	sys = cxt->syscpu;				/* /sys/devices/system/cpu/ */
+ 	npos = cxt->npossibles;				/* possible CPUs */
+@@ -113,6 +151,12 @@ static int cputype_read_topology(struct lscpu_cxt *cxt, struct lscpu_cputype *ct
+ 	DBG(TYPE, ul_debugobj(ct, "reading %s/%s/%s topology",
+ 				ct->vendor ?: "", ct->model ?: "", ct->modelname ?:""));
+ 
++	hp_online_state = get_online_state(sys);
++
++	temp_set = CPU_ALLOC(cxt->maxcpus);
++	if (!temp_set)
++		err(EXIT_FAILURE, _("cpuset_alloc failed"));
++
+ 	for (i = 0; i < cxt->npossibles; i++) {
+ 		struct lscpu_cpu *cpu = cxt->cpus[i];
+ 		cpu_set_t *thread_siblings = NULL, *core_siblings = NULL;
+@@ -127,6 +171,15 @@ static int cputype_read_topology(struct lscpu_cxt *cxt, struct lscpu_cputype *ct
+ 					"cpu%d/topology/thread_siblings", num) != 0)
+ 			continue;
+ 
++		/*
++		 * Ignore cpus which are not fully online.
++		 * If hp_online_state is negative/zero or rc is negative,
++		 * online state could not be read correctly, skip this check.
++		 */
++		rc = ul_path_readf_s32(sys, &hp_state, "cpu%d/hotplug/state", num);
++		if (hp_online_state > 0 && rc >= 0 && hp_state != hp_online_state)
++			continue;
++
+ 		/* read topology maps */
+ 		ul_path_readf_cpuset(sys, &thread_siblings, cxt->maxcpus,
+ 					"cpu%d/topology/thread_siblings", num);
+@@ -163,15 +216,16 @@ static int cputype_read_topology(struct lscpu_cxt *cxt, struct lscpu_cputype *ct
+ 
+ 		/* add to topology maps */
+ 		if (thread_siblings)
+-			add_cpuset_to_array(ct->coremaps, &ct->ncores, thread_siblings, cxt->setsize);
++			add_cpuset_to_array(ct->coremaps, &ct->ncores, thread_siblings, cxt->setsize, temp_set);
+ 		if (core_siblings)
+-			add_cpuset_to_array(ct->socketmaps, &ct->nsockets, core_siblings, cxt->setsize);
++			add_cpuset_to_array(ct->socketmaps, &ct->nsockets, core_siblings, cxt->setsize, temp_set);
+ 		if (book_siblings)
+-			add_cpuset_to_array(ct->bookmaps, &ct->nbooks, book_siblings, cxt->setsize);
++			add_cpuset_to_array(ct->bookmaps, &ct->nbooks, book_siblings, cxt->setsize, temp_set);
+ 		if (drawer_siblings)
+-			add_cpuset_to_array(ct->drawermaps, &ct->ndrawers, drawer_siblings, cxt->setsize);
++			add_cpuset_to_array(ct->drawermaps, &ct->ndrawers, drawer_siblings, cxt->setsize, temp_set);
+ 
+ 	}
++	CPU_FREE(temp_set);
+ 
+ 	/* s390 detects its cpu topology via /proc/sysinfo, if present.
+ 	 * Using simply the cpu topology masks in sysfs will not give

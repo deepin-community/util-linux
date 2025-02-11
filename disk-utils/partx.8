@@ -2,12 +2,12 @@
 .\"     Title: partx
 .\"    Author: [see the "AUTHOR(S)" section]
 .\" Generator: Asciidoctor 2.0.20
-.\"      Date: 2023-10-23
+.\"      Date: 2025-01-03
 .\"    Manual: System Administration
-.\"    Source: util-linux 2.39.3
+.\"    Source: util-linux 2.40.4
 .\"  Language: English
 .\"
-.TH "PARTX" "8" "2023-10-23" "util\-linux 2.39.3" "System Administration"
+.TH "PARTX" "8" "2025-01-03" "util\-linux 2.40.4" "System Administration"
 .ie \n(.g .ds Aq \(aq
 .el       .ds Aq '
 .ss \n[.ss] 0
@@ -200,7 +200,7 @@ partx \-\-add \-\-nr 3:5 /dev/sdd
 Adds all available partitions from 3 to 5 (inclusive) on \fI/dev/sdd\fP.
 .RE
 .sp
-partx \-d \-\-nr :\-1 /dev/sdd
+partx \-d \-\-nr \-1: /dev/sdd
 .RS 4
 Removes the last partition on \fI/dev/sdd\fP.
 .RE
