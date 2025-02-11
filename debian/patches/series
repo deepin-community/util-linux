@@ -23,3 +23,4 @@ upstream-master/sys-utils-setpriv-fix-potential-memory-leak.patch
 upstream-master/lscpu-fix-incorrect-number-of-sockets-during-hotplug.patch
 upstream-master/fallocate-forbid-posix-with-special-options.patch
 upstream-master/lib-colors-fix-fallback-to-system-directory.patch
+debian/usec-umac-adapt.patch
