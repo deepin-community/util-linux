@@ -1,0 +1,44 @@
+From: =?utf-8?b?Ik1hcmNvIFRyZXZpc2FuIChUcmV2acOxbyki?= <mail@3v1n0.net>
+Date: Fri, 20 Sep 2024 17:23:16 +0200
+Subject: login-utils/su-common: Check that the user didn't change during PAM
+ transaction
+
+PAM modules can change the user during their execution, in such case su
+would still use the user that has been provided giving potentially
+access to another user with the credentials of another one.
+
+So prevent this to happen, by ensuring that the final PAM user is
+matching the one required
+---
+ login-utils/su-common.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/login-utils/su-common.c b/login-utils/su-common.c
+index 3dda84e..dc7b1d9 100644
+--- a/login-utils/su-common.c
++++ b/login-utils/su-common.c
+@@ -383,6 +383,7 @@ static void supam_export_environment(struct su_context *su)
+ static void supam_authenticate(struct su_context *su)
+ {
+ 	const char *srvname = NULL;
++	const char *pam_user = NULL;
+ 	int rc;
+ 
+ 	srvname = su->runuser ?
+@@ -423,6 +424,16 @@ static void supam_authenticate(struct su_context *su)
+ 	rc = pam_acct_mgmt(su->pamh, 0);
+ 	if (rc == PAM_NEW_AUTHTOK_REQD)
+ 		rc = pam_chauthtok(su->pamh, PAM_CHANGE_EXPIRED_AUTHTOK);
++
++	rc = pam_get_item(su->pamh, PAM_USER, (const void **) &pam_user);
++	if (is_pam_failure(rc))
++		goto done;
++
++	if (pam_user == NULL || strcmp(pam_user, su->pwd->pw_name) != 0) {
++		rc = PAM_USER_UNKNOWN;
++		goto done;
++	}
++
+  done:
+ 	log_syslog(su, !is_pam_failure(rc));
+ 

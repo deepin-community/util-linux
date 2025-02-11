@@ -1,4 +1,5 @@
-Tests: oversized-chunks
+Tests:
+ oversized-chunks,
 Depends:
  bash,
  bc,
@@ -7,33 +8,57 @@ Depends:
  dpkg,
  grep,
  mount,
- util-linux
-Restrictions: allow-stderr
+ util-linux,
+Restrictions:
+ allow-stderr,
 
-Tests: libblkid-dev
+Tests:
+ libblkid-dev,
 Depends:
  build-essential,
  libblkid-dev,
- pkg-config
-Restrictions: allow-stderr, superficial
+ pkg-config,
+Restrictions:
+ allow-stderr,
+ superficial,
 
-Tests: libmount-dev
+Tests:
+ libmount-dev,
 Depends:
  build-essential,
  libmount-dev,
- pkg-config
-Restrictions: allow-stderr, superficial
+ pkg-config,
+Restrictions:
+ allow-stderr,
+ superficial,
 
-Tests: libsmartcols-dev
+Tests:
+ libsmartcols-dev,
 Depends:
  build-essential,
  libsmartcols-dev,
- pkg-config
-Restrictions: allow-stderr, superficial
+ pkg-config,
+Restrictions:
+ allow-stderr,
+ superficial,
 
-Tests: uuid-dev
+Tests:
+ uuid-dev,
 Depends:
  build-essential,
  pkg-config,
- uuid-dev
-Restrictions: allow-stderr, superficial
+ uuid-dev,
+Restrictions:
+ allow-stderr,
+ superficial,
+
+Tests:
+ login,
+Depends:
+ expect,
+ login,
+ passwd,
+Restrictions:
+ allow-stderr,
+ breaks-testbed,
+ needs-root,

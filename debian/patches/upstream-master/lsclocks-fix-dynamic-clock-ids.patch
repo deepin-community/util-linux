@@ -1,0 +1,41 @@
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas@t-8ch.de>
+Date: Tue, 24 Dec 2024 00:56:12 +0100
+Subject: lsclocks: fix dynamic clock ids
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+
+Without an explicitly specified clock id, lsclocks would always use
+clock id 0 (CLOCK_REALTIME) for the dynamic/PTP clocks.
+
+Signed-off-by: Thomas Weißschuh <thomas@t-8ch.de>
+---
+ misc-utils/lsclocks.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/misc-utils/lsclocks.c b/misc-utils/lsclocks.c
+index 0799f65..def5127 100644
+--- a/misc-utils/lsclocks.c
++++ b/misc-utils/lsclocks.c
+@@ -40,6 +40,13 @@
+ #include "all-io.h"
+ #include "list.h"
+ 
++#define CLOCKFD 3
++
++static inline clockid_t FD_TO_CLOCKID(int fd)
++{
++	return (~(unsigned int) fd << 3) | CLOCKFD;
++}
++
+ #ifndef CLOCK_REALTIME
+ #define CLOCK_REALTIME			0
+ #endif
+@@ -393,6 +400,7 @@ static void add_dynamic_clock_from_path(struct libscols_table *tb,
+ 
+ 	struct clockinfo clockinfo = {
+ 		.type = CT_PTP,
++		.id = FD_TO_CLOCKID(fd),
+ 		.no_id = true,
+ 		.id_name = path,
+ 		.name = path,
