@@ -27,8 +27,10 @@ endif
 endif
 
 # As a result of CVE-2024-28085, we no longer install mesg/write.
-CONFOPTS += --disable-mesg
-CONFOPTS += --disable-write
+#CONFOPTS += --disable-mesg
+#CONFOPTS += --disable-write
+
+CONFOPTS += --enable-write
 
 # build static versions of programs used in fdisk-udeb and util-linux-udeb
 CONFOPTS += --enable-static-programs=fdisk,sfdisk,blkid
@@ -45,10 +47,14 @@ CONFOPTS += --disable-chfn-chsh
 # => bsdmainutils
 CONFOPTS += --disable-cal
 # => wtmpdb
-CONFOPTS += --disable-last --disable-utmpdump
+#CONFOPTS += --disable-last --disable-utmpdump
+CONFOPTS += --disable-last
 
 # Keep hwclock as GPLv2 (and others)
 CONFOPTS += --disable-hwclock-gplv3
+
+# Reduce setgid programs (cf. CVE-2024-28085)
+CONFOPTS += --disable-use-tty-group
 
 ifeq ($(DEB_HOST_ARCH),hurd-i386)
 # hurd porters plan to drop 32bit before 2038

@@ -9,6 +9,7 @@ usr/share/locale/*/*/util-linux.mo
 <!nodoc> debian/tmp/usr/share/man/*/man1/hexdump.1
 <!nodoc> debian/tmp/usr/share/man/*/man1/look.1
 <!nodoc> debian/tmp/usr/share/man/*/man1/ul.1
+<!nodoc> debian/tmp/usr/share/man/*/man1/write.1
 
 # bsdutils
 <!nodoc> debian/tmp/usr/share/man/*/man1/logger.1
