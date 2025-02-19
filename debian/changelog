@@ -1,3 +1,9 @@
+util-linux (2.40.4-3deepin4) unstable; urgency=medium
+
+  * backward old version lsblk for show hotplug flag bug.
+
+ -- xinpeng.wang <wangxinpeng@uniontech.com>  Wed, 19 Feb 2025 15:49:13 +0800
+
 util-linux (2.40.4-3deepin3) unstable; urgency=medium
 
   * Use reduce setgid to fix CVE-2024-28085, compile and 

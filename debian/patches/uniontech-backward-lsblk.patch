@@ -1,0 +1,16 @@
+Index: deepin-util-linux/lib/sysfs.c
+===================================================================
+--- deepin-util-linux.orig/lib/sysfs.c	2025-02-18 19:21:07.023602174 +0800
++++ deepin-util-linux/lib/sysfs.c	2025-02-18 19:46:18.644086290 +0800
+@@ -502,6 +502,11 @@
+ int sysfs_blkdev_is_hotpluggable(struct path_cxt *pc)
+ {
+ 	char buf[PATH_MAX], *chain;
++	int rc = 0;
++
++	/* check /sys/dev/block/<maj>:<min>/removable attribute */
++	if (ul_path_read_s32(pc, &rc, "removable") == 0 && rc == 1)
++		return 1;
+ 
+ 	chain = sysfs_blkdev_get_devchain(pc, buf, sizeof(buf));
+ 	return sysfs_devchain_is_removable(chain);
