@@ -1,3 +1,9 @@
+util-linux (2.40.4-3deepin5) unstable; urgency=medium
+
+  * Add sw64 support.
+
+ -- xinpeng.wang <wangxinpeng@uniontech.com>  Fri, 07 Mar 2025 13:26:03 +0800
+
 util-linux (2.40.4-3deepin4) unstable; urgency=medium
 
   * backward old version lsblk for show hotplug flag bug.
