@@ -10,3 +10,86 @@ Index: util-linux/login-utils/login.c
  
  	chown_tty(&cxt);
  
+Index: util-linux/login-utils/su-common.c
+===================================================================
+--- util-linux.orig/login-utils/su-common.c
++++ util-linux/login-utils/su-common.c
+@@ -1044,6 +1044,69 @@ static gid_t add_supp_group(const char *
+ 	return gr->gr_gid;
+ }
+ 
++/*
++ * Update utmp and wtmp logs for successful su.
++ */
++static void log_utmp(struct su_context *su)
++{
++	struct utmpx ut;
++	struct utmpx *utp;
++	struct timeval tv;
++
++	utmpxname(_PATH_UTMP);
++	setutxent();
++
++	/* Find pid in utmp. */
++	while ((utp = getutxent()))
++		if (utp->ut_pid == getpid()
++		    && utp->ut_type >= INIT_PROCESS
++		    && utp->ut_type <= DEAD_PROCESS)
++			break;
++
++	/* If we can't find a pre-existing entry by pid, try by line. */
++	if (utp == NULL && su->tty_name) {
++		setutxent();
++		ut.ut_type = LOGIN_PROCESS;
++		str2memcpy(ut.ut_line, su->tty_name, sizeof(ut.ut_line));
++		utp = getutxline(&ut);
++	}
++
++	/* If we can't find a pre-existing entry by pid and line, try it by id. */
++	if (utp == NULL && su->tty_number) {
++		setutxent();
++		ut.ut_type = DEAD_PROCESS;
++		str2memcpy(ut.ut_id, su->tty_number, sizeof(ut.ut_id));
++		utp = getutxid(&ut);
++	}
++
++	if (utp)
++		memcpy(&ut, utp, sizeof(ut));
++	else
++		/* some terminals don't initialize utmp... */
++		memset(&ut, 0, sizeof(ut));
++
++	if (su->tty_number && ut.ut_id[0] == 0)
++		str2memcpy(ut.ut_id, su->tty_number, sizeof(ut.ut_id));
++	if (su->new_user)
++		str2memcpy(ut.ut_user, su->new_user, sizeof(ut.ut_user));
++	if (su->tty_name)
++		str2memcpy(ut.ut_line, su->tty_name, sizeof(ut.ut_line));
++
++	gettimeofday(&tv, NULL);
++	ut.ut_tv.tv_sec = tv.tv_sec;
++	ut.ut_tv.tv_usec = tv.tv_usec;
++	ut.ut_type = USER_PROCESS;
++	ut.ut_pid = getpid();
++
++	/* For su, we could potentially set ut_host to indicate it's an su session */
++	/* but traditionally su doesn't change the host field */
++
++	pututxline(&ut);
++	endutxent();
++
++	updwtmpx(_PATH_WTMP, &ut);
++}
++
+ int su_main(int argc, char **argv, int mode)
+ {
+ 	struct su_context _su = {
+@@ -1271,6 +1334,8 @@ int su_main(int argc, char **argv, int m
+ 
+ 	supam_open_session(su);
+ 
++	log_utmp(su);
++
+ #ifdef USE_PTY
+ 	if (su->force_pty) {
+ 		ON_DBG(PTY, ul_pty_init_debug(0xffff));
