@@ -2,7 +2,90 @@ Index: util-linux/login-utils/login.c
 ===================================================================
 --- util-linux.orig/login-utils/login.c
 +++ util-linux/login-utils/login.c
-@@ -1494,6 +1494,7 @@ int main(int argc, char **argv)
+@@ -1076,6 +1076,62 @@ static void loginpam_session(struct logi
+ }
+ 
+ /*
++ * Clean up utmp entry when user logs out.
++ */
++static void log_out_utmp(struct login_context *cxt)
++{
++	struct utmpx ut = { 0 };
++	struct utmpx *utp = NULL;
++	struct timeval tv = { 0 };
++
++	utmpxname(_PATH_UTMP);
++	setutxent();
++
++	/* Find the entry to clean up - search by pid first */
++	while ((utp = getutxent()))
++		if (utp->ut_pid == cxt->pid && utp->ut_type == USER_PROCESS)
++			break;
++
++	/* If we can't find by pid, try by line */
++	if (utp == NULL && cxt->tty_name) {
++		setutxent();
++		ut.ut_type = USER_PROCESS;
++		str2memcpy(ut.ut_line, cxt->tty_name, sizeof(ut.ut_line));
++		utp = getutxline(&ut);
++	}
++
++	/* If we can't find by pid and line, try by id */
++	if (utp == NULL && cxt->tty_number) {
++		setutxent();
++		ut.ut_type = USER_PROCESS;
++		str2memcpy(ut.ut_id, cxt->tty_number, sizeof(ut.ut_id));
++		utp = getutxid(&ut);
++	}
++
++	if (utp) {
++		/* Copy the existing entry and modify it for logout */
++		memcpy(&ut, utp, sizeof(ut));
++
++		/* Clear the username to indicate logout */
++		memset(ut.ut_user, 0, sizeof(ut.ut_user));
++
++		/* Mark as dead process */
++		ut.ut_type = DEAD_PROCESS;
++
++		/* Update timestamp */
++		gettimeofday(&tv, NULL);
++		ut.ut_tv.tv_sec = tv.tv_sec;
++		ut.ut_tv.tv_usec = tv.tv_usec;
++
++		/* Update utmp and wtmp */
++		pututxline(&ut);
++		updwtmpx(_PATH_WTMP, &ut);
++	}
++
++	endutxent();
++}
++
++/*
+  * Detach the controlling terminal, fork, restore syslog stuff, and create
+  * a new session.
+  */
+@@ -1118,6 +1174,9 @@ static void fork_session(struct login_co
+ 	if (child_pid < 0) {
+ 		warn(_("fork failed"));
+ 
++		/* Clean up utmp record before exit on fork failure */
++		log_out_utmp(cxt);
++
+ 		pam_setcred(cxt->pamh, PAM_DELETE_CRED);
+ 		pam_end(cxt->pamh, pam_close_session(cxt->pamh, 0));
+ 		sleepexit(EXIT_FAILURE);
+@@ -1140,6 +1199,9 @@ static void fork_session(struct login_co
+ 		while (wait(NULL) == -1 && errno == EINTR) ;
+ 		openlog("login", LOG_ODELAY, LOG_AUTHPRIV);
+ 
++		/* Clean up utmp record before exit on fork failure */
++		log_out_utmp(cxt);
++
+ 		pam_setcred(cxt->pamh, PAM_DELETE_CRED);
+ 		pam_end(cxt->pamh, pam_close_session(cxt->pamh, 0));
+ 		exit(EXIT_SUCCESS);
+@@ -1494,6 +1556,7 @@ int main(int argc, char **argv)
  	endpwent();
  
  	log_audit(&cxt, 1);
