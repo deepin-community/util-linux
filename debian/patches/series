@@ -26,3 +26,4 @@ upstream-master/lib-colors-fix-fallback-to-system-directory.patch
 debian/usec-umac-adapt.patch
 uniontech-backward-lsblk.patch
 debian/login-turn-on-utmp-writing.patch
+add-sunway-support.patch

@@ -1,3 +1,9 @@
+util-linux (2.40.4-3deepin7) unstable; urgency=medium
+
+  * feat: add sw64 support
+
+ -- Deepin Packages Builder <packages@deepin.org>  Fri, 13 Jun 2025 11:14:41 +0800
+
 util-linux (2.40.4-3deepin6) unstable; urgency=medium
 
   * fix var/run/utmp don't be updated after logout
