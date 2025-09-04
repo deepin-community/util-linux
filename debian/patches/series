@@ -6,6 +6,7 @@ debian/sensible-pager.patch
 debian/login-support-LOG_OK_LOGINS.patch
 debian/login-do-not-print-motd-done-by-PAM.patch
 debian/login-turn-off-btmp-utmp-lastlog-writing.patch
+debian/salsa-ci-skip-tests.patch
 upstream-master/fsck-warn-if-fsck.-type-not-found-and-device-is-specified.patch
 upstream-master/libmount-Fix-atime-remount-for-new-API.patch
 upstream-master/swapoff-avoid-being-killed-by-OOM.patch
@@ -23,7 +24,4 @@ upstream-master/sys-utils-setpriv-fix-potential-memory-leak.patch
 upstream-master/lscpu-fix-incorrect-number-of-sockets-during-hotplug.patch
 upstream-master/fallocate-forbid-posix-with-special-options.patch
 upstream-master/lib-colors-fix-fallback-to-system-directory.patch
-debian/usec-umac-adapt.patch
-uniontech-backward-lsblk.patch
-add-sunway-support.patch
-uniontech-fix-arm-lscpu-modename.patch
+upstream-master/agetty-fix-stdin-conversion-to-tty-name.patch

@@ -5,6 +5,8 @@ expect_before {
 }
 
 spawn login
+# Let `login` start even when things are slow
+sleep 2
 expect "login:"
 send -- "obiwan\r"
 expect "assword:"

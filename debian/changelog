@@ -1,52 +1,26 @@
-util-linux (2.40.4-3deepin8) unstable; urgency=medium
+util-linux (2.40.4-5) unstable; urgency=medium
 
-  * fix lscpu wrong at Phytium.
-  * revert fix var/run/utmp don't be updated after logout/login
+  * Apply upstream patch to avoid agetty crash (Closes: #1098694)
 
- -- xinpeng.wang <wangxinpeng@uniontech.com>  Thu, 19 Jun 2025 17:50:42 +0800
+ -- Chris Hofstaedtler <zeha@debian.org>  Tue, 25 Feb 2025 11:34:50 +0100
 
-util-linux (2.40.4-3deepin7) unstable; urgency=medium
+util-linux (2.40.4-4) unstable; urgency=medium
 
-  * feat: add sw64 support
+  [ Jörg Behrmann ]
+  * Install exch (Closes: #1095655)
 
- -- Deepin Packages Builder <packages@deepin.org>  Fri, 13 Jun 2025 11:14:41 +0800
+  [ Chris Hofstaedtler ]
+  * Set Multi-Arch: same for liblastlog2-dev
+  * Mark "login" test as flaky
+  * Install localized manpages for exch(1)
+  * debian/tests: drop oversized-chunks
+  * Skip fadvise/drop test in salsa ci
+  * Move resizepart from util-linux to util-linux-extra
 
-util-linux (2.40.4-3deepin6) unstable; urgency=medium
+  [ Florent 'Skia' Jacquet ]
+  * d/tests: fix login test in case things™ are slow
 
-  * fix var/run/utmp don't be updated after logout
-
- -- jiahao.luo <luojiahao@uniontech.com>  Fri, 06 Jun 2025 15:06:55 +0800
-
-util-linux (2.40.4-3deepin5) unstable; urgency=medium
-
-  * fix var/run/utmp don't be updated after login
-
- -- jiahao.luo <luojiahao@uniontech.com>  Fri, 16 May 2025 17:14:50 +0800
-
-util-linux (2.40.4-3deepin4) unstable; urgency=medium
-
-  * backward old version lsblk for show hotplug flag bug.
-
- -- xinpeng.wang <wangxinpeng@uniontech.com>  Wed, 19 Feb 2025 15:49:13 +0800
-
-util-linux (2.40.4-3deepin3) unstable; urgency=medium
-
-  * Use reduce setgid to fix CVE-2024-28085, compile and 
-  *     install write, utmpdump, mesg.
-
- -- xinpeng.wang <wangxinpeng@uniontech.com>  Thu, 13 Feb 2025 14:10:34 +0800
-
-util-linux (2.40.4-3deepin2) unstable; urgency=medium
-
-  * Port the code about umac to V25 of UOS.
-
- -- lichenggang <lichenggang@deepin.org>  Tue, 11 Feb 2025 16:01:00 +0800
-
-util-linux (2.40.4-3deepin1) unstable; urgency=medium
-
-  * revert t64.
-
- -- lichenggang <lichenggang@deepin.org>  Tue, 11 Feb 2025 15:58:33 +0800
+ -- Chris Hofstaedtler <zeha@debian.org>  Mon, 17 Feb 2025 14:21:56 +0100
 
 util-linux (2.40.4-3) unstable; urgency=medium
 
