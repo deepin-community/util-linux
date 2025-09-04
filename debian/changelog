@@ -1,3 +1,12 @@
+util-linux (2.40.4-5deepin1) unstable; urgency=medium
+
+  * add debian/usec-umac-adapt.patch
+  * add uniontech-backward-lsblk.patch
+  * add add-sunway-support.patch
+  * add uniontech-fix-arm-lscpu-modename.patch
+
+ -- lichenggang <lichenggang@deepin.org>  Thu, 04 Sep 2025 15:50:49 +0800
+
 util-linux (2.40.4-5) unstable; urgency=medium
 
   * Apply upstream patch to avoid agetty crash (Closes: #1098694)

@@ -1,0 +1,253 @@
+
+Index: deepin-util-linux/include/audit-arch.h
+===================================================================
+--- deepin-util-linux.orig/include/audit-arch.h	2025-02-18 19:21:07.023602174 +0800
++++ deepin-util-linux/include/audit-arch.h	2025-03-07 13:31:55.000000000 +0800
+@@ -73,7 +73,7 @@
+ #    else
+ #	 define SECCOMP_ARCH_NATIVE AUDIT_ARCH_PARISC64
+ #    endif
+-#elif __alpha__
++#elif defined(__alpha__) || defined(__sw_64__)
+ #    define SECCOMP_ARCH_NATIVE AUDIT_ARCH_ALPHA
+ #else
+ #    error Unknown target architecture
+Index: deepin-util-linux/include/pt-bsd.h
+===================================================================
+--- deepin-util-linux.orig/include/pt-bsd.h	2025-02-13 14:02:59.262491804 +0800
++++ deepin-util-linux/include/pt-bsd.h	2025-03-07 13:32:39.912939562 +0800
+@@ -14,7 +14,7 @@
+
+ #define BSD_LINUX_BOOTDIR "/usr/ucb/mdec"
+
+-#if defined (__alpha__) || defined (__powerpc__) || \
++#if defined (__alpha__) || defined (__powerpc__) || defined (__sw_64__) ||\
+     defined (__ia64__) || defined (__hppa__)
+ # define BSD_LABELSECTOR   0
+ # define BSD_LABELOFFSET   64
+@@ -141,7 +141,7 @@
+ #define BSD_FS_ADVFS	16		/* Digital Unix AdvFS */
+
+ /* this is annoying, but it's also the way it is :-( */
+-#ifdef __alpha__
++#if defined(__alpha__) || defined(__sw_64__)
+ #define	BSD_FS_EXT2	8		/* ext2 file system */
+ #else
+ #define	BSD_FS_MSDOS	8		/* MS-DOS file system */
+Index: deepin-util-linux/libfdisk/src/bsd.c
+===================================================================
+--- deepin-util-linux.orig/libfdisk/src/bsd.c	2025-02-18 19:21:07.031602241 +0800
++++ deepin-util-linux/libfdisk/src/bsd.c	2025-03-07 13:31:55.000000000 +0800
+@@ -55,7 +55,7 @@
+ 	{BSD_FS_V71K,   "4.1BSD"},
+ 	{BSD_FS_V8,     "Eighth Edition"},
+ 	{BSD_FS_BSDFFS, "4.2BSD"},
+-#ifdef __alpha__
++#if defined(__alpha__) || defined(__sw_64__)
+ 	{BSD_FS_EXT2,   "ext2"},
+ #else
+ 	{BSD_FS_MSDOS,  "MS-DOS"},
+@@ -80,7 +80,7 @@
+
+ 	struct dos_partition *dos_part;		/* parent */
+ 	struct bsd_disklabel bsd;		/* on disk label */
+-#if defined (__alpha__)
++#if defined(__alpha__) || defined(__sw_64__)
+ 	/* We access this through a u_int64_t * when checksumming */
+ 	char bsdbuffer[BSD_BBSIZE] __attribute__((aligned(8)));
+ #else
+@@ -120,7 +120,7 @@
+ }
+
+
+-#if defined (__alpha__)
++#if defined(__alpha__) || defined(__sw_64__)
+ static void alpha_bootblock_checksum (char *boot)
+ {
+ 	uint64_t *dp = (uint64_t *) boot, sum = 0;
+@@ -606,7 +606,7 @@
+ 	struct bsd_disklabel *d = self_disklabel(cxt);
+ 	uintmax_t res;
+
+-#if defined (__alpha__) || defined (__ia64__)
++#if defined (__alpha__) || defined (__ia64__) || defined(__sw_64__)
+ 	if (fdisk_ask_number(cxt, DEFAULT_SECTOR_SIZE, d->d_secsize,
+ 			     UINT32_MAX, _("bytes/sector"), &res) == 0)
+ 		d->d_secsize = res;
+@@ -712,7 +712,7 @@
+ 	sector = 0;
+ 	if (l->dos_part)
+ 		sector = dos_partition_get_start(l->dos_part);
+-#if defined (__alpha__)
++#if defined(__alpha__) || defined(__sw_64__)
+ 	alpha_bootblock_checksum(l->bsdbuffer);
+ #endif
+ 	if (lseek(cxt->dev_fd, (off_t) sector * DEFAULT_SECTOR_SIZE, SEEK_SET) == -1) {
+@@ -769,7 +769,7 @@
+ 	else
+ 		d -> d_type = BSD_DTYPE_ST506;
+
+-#if !defined (__alpha__)
++#if ! (defined (__alpha__) || defined (__sw_64__))
+ 	d -> d_flags = BSD_D_DOSPART;
+ #else
+ 	d -> d_flags = 0;
+@@ -893,7 +893,7 @@
+ 	memmove(&l->bsdbuffer[BSD_LABELSECTOR * DEFAULT_SECTOR_SIZE
+ 			   + BSD_LABELOFFSET], d, sizeof(*d));
+
+-#if defined (__alpha__) && BSD_LABELSECTOR == 0
++#if ( defined (__alpha__) || defined (__sw_64__) ) && BSD_LABELSECTOR == 0
+ 	/* Write the checksum to the end of the first sector. */
+ 	alpha_bootblock_checksum(l->bsdbuffer);
+ #endif
+@@ -929,7 +929,7 @@
+ 	case 0x06: /* DOS 16-bit >=32M */
+ 	case 0xe1: /* DOS access       */
+ 	case 0xe3: /* DOS R/O          */
+-#if !defined (__alpha__)
++#if ! (defined (__alpha__) || defined (__sw_64__))
+ 	case 0xf2: /* DOS secondary    */
+ 		return BSD_FS_MSDOS;
+ #endif
+Index: deepin-util-linux/misc-utils/fincore.c
+===================================================================
+--- deepin-util-linux.orig/misc-utils/fincore.c	2025-02-18 19:21:07.043602342 +0800
++++ deepin-util-linux/misc-utils/fincore.c	2025-03-07 13:31:55.000000000 +0800
+@@ -46,7 +46,7 @@
+ #ifndef HAVE_CACHESTAT
+
+ #ifndef SYS_cachestat
+-#if defined (__alpha__)
++#if defined(__alpha__) || defined(__sw_64__)
+ #define SYS_cachestat 561
+ #else
+ #define SYS_cachestat 451
+Index: deepin-util-linux/sys-utils/hwclock-rtc.c
+===================================================================
+--- deepin-util-linux.orig/sys-utils/hwclock-rtc.c	2025-02-18 19:21:07.243604020 +0800
++++ deepin-util-linux/sys-utils/hwclock-rtc.c	2025-03-07 13:31:55.000000000 +0800
+@@ -345,7 +345,7 @@
+ 	return &rtc_interface;
+ }
+
+-#ifdef __alpha__
++#if defined(__alpha__) || defined(__sw_64__)
+ /*
+  * Get the Hardware Clock epoch setting from the kernel.
+  */
+Index: deepin-util-linux/sys-utils/hwclock.c
+===================================================================
+--- deepin-util-linux.orig/sys-utils/hwclock.c	2025-02-18 19:21:07.243604020 +0800
++++ deepin-util-linux/sys-utils/hwclock.c	2025-03-07 13:31:55.000000000 +0800
+@@ -1140,7 +1140,7 @@
+  * Get or set the kernel RTC driver's epoch on Alpha machines.
+  * ISA machines are hard coded for 1900.
+  */
+-#if defined(__linux__) && defined(__alpha__)
++#if defined(__linux__) && (defined(__alpha__) || defined(__sw_64__))
+ static void
+ manipulate_epoch(const struct hwclock_control *ctl)
+ {
+@@ -1229,7 +1229,7 @@
+ 	puts(_(" -w, --systohc                   set the RTC from the system time"));
+ 	puts(_("     --systz                     send timescale configurations to the kernel"));
+ 	puts(_(" -a, --adjust                    adjust the RTC to account for systematic drift"));
+-#if defined(__linux__) && defined(__alpha__)
++#if defined(__linux__) && (defined(__alpha__) || defined(__sw_64__))
+ 	puts(_("     --getepoch                  display the RTC epoch"));
+ 	puts(_("     --setepoch                  set the RTC epoch according to --epoch"));
+ #endif
+@@ -1251,7 +1251,7 @@
+ 	       "     --directisa                 use the ISA bus instead of %1$s access\n"), _PATH_RTC_DEV);
+ 	puts(_("     --date <time>               date/time input for --set and --predict"));
+ 	puts(_("     --delay <sec>               delay used when set new RTC time"));
+-#if defined(__linux__) && defined(__alpha__)
++#if defined(__linux__) && (defined(__alpha__) || defined(__sw_64__))
+ 	puts(_("     --epoch <year>              epoch input for --setepoch"));
+ #endif
+ 	puts(_("     --update-drift              update the RTC drift factor"));
+@@ -1332,7 +1332,7 @@
+ 		{ "ul-debug",     required_argument, NULL, 'd'            },
+ 		{ "verbose",      no_argument,       NULL, 'v'            },
+ 		{ "set",          no_argument,       NULL, OPT_SET        },
+-#if defined(__linux__) && defined(__alpha__)
++#if defined(__linux__) && (defined(__alpha__) || defined(__sw_64__))
+ 		{ "getepoch",     no_argument,       NULL, OPT_GETEPOCH   },
+ 		{ "setepoch",     no_argument,       NULL, OPT_SETEPOCH   },
+ 		{ "epoch",        required_argument, NULL, OPT_EPOCH      },
+@@ -1442,7 +1442,7 @@
+ 			ctl.show = 0;
+ 			ctl.hwaudit_on = 1;
+ 			break;
+-#if defined(__linux__) && defined(__alpha__)
++#if defined(__linux__) && (defined(__alpha__) || defined(__sw_64__))
+ 		case OPT_GETEPOCH:
+ 			ctl.getepoch = 1;
+ 			ctl.show = 0;
+@@ -1584,7 +1584,7 @@
+ 	}
+ #endif
+
+-#if defined(__linux__) && defined(__alpha__)
++#if defined(__linux__) && (defined(__alpha__) || defined(__sw_64__))
+ 	if (ctl.getepoch || ctl.setepoch) {
+ 		manipulate_epoch(&ctl);
+ 		hwclock_exit(&ctl, EXIT_SUCCESS);
+Index: deepin-util-linux/sys-utils/hwclock.h
+===================================================================
+--- deepin-util-linux.orig/sys-utils/hwclock.h	2025-02-18 19:21:07.243604020 +0800
++++ deepin-util-linux/sys-utils/hwclock.h	2025-03-07 13:31:55.000000000 +0800
+@@ -32,7 +32,7 @@
+ 	char *date_opt;
+ 	char *adj_file_name;
+ 	double rtc_delay;	/* --delay <seconds> */
+-#if defined(__linux__) && defined(__alpha__)
++#if defined(__linux__) && (defined(__alpha__) || defined(__sw_64__))
+ 	char *epoch_option;
+ #endif
+ #ifdef __linux__
+@@ -47,7 +47,7 @@
+ 		hctosys:1,
+ 		utc:1,
+ 		systohc:1,
+-#if defined(__linux__) && defined(__alpha__)
++#if defined(__linux__) && (defined(__alpha__) || defined(__sw_64__))
+ 		getepoch:1,
+ 		setepoch:1,
+ #endif
+@@ -82,7 +82,7 @@
+ extern double time_diff(struct timeval subtrahend, struct timeval subtractor);
+
+ /* rtc.c */
+-#if defined(__linux__) && defined(__alpha__)
++#if defined(__linux__) && (defined(__alpha__) || defined(__sw_64__))
+ extern int get_epoch_rtc(const struct hwclock_control *ctl, unsigned long *epoch);
+ extern int set_epoch_rtc(const struct hwclock_control *ctl);
+ #endif
+Index: deepin-util-linux/sys-utils/lscpu-cputype.c
+===================================================================
+--- deepin-util-linux.orig/sys-utils/lscpu-cputype.c	2025-02-18 19:21:07.243604020 +0800
++++ deepin-util-linux/sys-utils/lscpu-cputype.c	2025-03-07 13:31:55.000000000 +0800
+@@ -626,7 +626,7 @@
+ 		 * information about our real CPU */
+ 		;
+ 	else {
+-#if defined(__alpha__) || defined(__ia64__)
++#if defined(__alpha__) || defined(__ia64__) || defined(__sw_64__)
+ 		ar->bit64 = 1;	/* 64bit platforms only */
+ #endif
+ 		/* platforms with 64bit flag in /proc/cpuinfo, define
+Index: deepin-util-linux/sys-utils/setarch.c
+===================================================================
+--- deepin-util-linux.orig/sys-utils/setarch.c	2025-02-18 19:21:07.247604054 +0800
++++ deepin-util-linux/sys-utils/setarch.c	2025-03-07 13:31:55.000000000 +0800
+@@ -234,7 +234,7 @@
+ 		{PER_LINUX32,	"mips",		"mips"},
+ 		{PER_LINUX,	"mips64",	"mips64"},
+ #endif
+-#if defined(__alpha__)
++#if defined(__alpha__) || defined(__sw_64__)
+ 		{PER_LINUX,	"alpha",	"alpha"},
+ 		{PER_LINUX,	"alphaev5",	"alpha"},
+ 		{PER_LINUX,	"alphaev56",	"alpha"},
