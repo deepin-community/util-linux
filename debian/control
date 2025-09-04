@@ -458,10 +458,10 @@ Package: util-linux-extra
 Architecture: any
 Build-Profiles: <!stage1>
 Replaces:
- util-linux (<< 2.40-0~),
+ util-linux (<< 2.40.4-4~),
 Breaks:
  initscripts (<< 3.08-2~),
- util-linux (<< 2.40-0~),
+ util-linux (<< 2.40.4-4~),
 Priority: standard
 Multi-Arch: foreign
 Description: interactive login tools
@@ -480,6 +480,7 @@ Package: liblastlog2-dev
 Architecture: any
 Priority: optional
 Section: libdevel
+Multi-Arch: same
 Description: liblastlog2 development files
  Y2038 safe lastlog database implementation, development files.
 

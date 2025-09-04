@@ -9,11 +9,13 @@ sbin/mkfs.bfs usr/sbin/
 sbin/mkfs.cramfs usr/sbin/
 sbin/mkfs.minix usr/sbin/
 [linux-any] usr/bin/enosys
+[linux-any] usr/bin/exch
 [linux-any] usr/bin/fadvise
 [linux-any] usr/bin/fincore
 [linux-any] usr/bin/lsfd
 [linux-any] usr/bin/lsirq
 [linux-any] usr/bin/waitpid
+[linux-any] usr/sbin/resizepart usr/bin/
 [linux-any] usr/share/bash-completion/completions/fadvise
 [linux-any] usr/share/bash-completion/completions/pipesz
 [linux-any] usr/share/bash-completion/completions/waitpid
@@ -24,6 +26,7 @@ sbin/mkfs.minix usr/sbin/
 <!nodoc> usr/share/man/man8/mkfs.cramfs.8
 <!nodoc> usr/share/man/man8/mkfs.minix.8
 [linux-any] <!nodoc> usr/share/man/man1/enosys.1
+[linux-any] <!nodoc> usr/share/man/man1/exch.1
 [linux-any] <!nodoc> usr/share/man/man1/fadvise.1
 [linux-any] <!nodoc> usr/share/man/man1/fincore.1
 [linux-any] <!nodoc> usr/share/man/man1/lsfd.1
@@ -32,3 +35,4 @@ sbin/mkfs.minix usr/sbin/
 [linux-any] <!nodoc> usr/share/man/man1/waitpid.1
 [linux-any] <!nodoc> usr/share/man/man8/blkpr.8
 [linux-any] <!nodoc> usr/share/man/man8/ctrlaltdel.8
+[linux-any] <!nodoc> usr/share/man/man8/resizepart.8

@@ -13,6 +13,6 @@ useradd --password '$y$j9T$ZLi71y6HSLZJfI4icrkue1$JJlJEL9y7BVuWYthlQ7tNiFMCXHKNl
 groupadd -f jedi
 
 # Let obiwan not be a jedi when logging in, but get promoted after enough time to log in
-(sleep 2 && usermod -aG jedi obiwan) &
+(sleep 4 && usermod -aG jedi obiwan) &
 
 expect ./debian/tests/login.exp
