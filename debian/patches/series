@@ -27,3 +27,6 @@ debian/usec-umac-adapt.patch
 uniontech-backward-lsblk.patch
 add-sunway-support.patch
 uniontech-fix-arm-lscpu-modename.patch
+CVE-2025-14104-1.patch
+CVE-2025-14104-2.patch
+
