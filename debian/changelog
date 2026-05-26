@@ -1,3 +1,11 @@
+util-linux (2.40.4-3deepin10) unstable; urgency=medium
+
+  * Backport upstream bug fixes:
+  * c88bf7ff: agetty: fix path_cxt leak in credential loading
+  * 47645c45: pipesz: fix duplicate error message on invalid options
+
+ -- jiabowen <jiabowen@uniontech.com>  Tue, 26 May 2026 20:14:58 +0800
+
 util-linux (2.40.4-3deepin9) unstable; urgency=medium
 
   * fix CVE-2025-14104 

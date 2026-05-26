@@ -30,3 +30,5 @@ uniontech-fix-arm-lscpu-modename.patch
 CVE-2025-14104-1.patch
 CVE-2025-14104-2.patch
 
+upstream-master/agetty-fix-path_cxt-leak-credential-loading.patch
+upstream-master/pipesz-fix-duplicate-error-getopt-merge.patch

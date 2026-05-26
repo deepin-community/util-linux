@@ -1,0 +1,53 @@
+From 47645c455e785857e9d8eb131ea11de6a1df61c3 Mon Sep 17 00:00:00 2001
+From: Karel Zak <kzak@redhat.com>
+Date: Mon, 25 May 2026 13:33:34 +0200
+Subject: [PATCH] pipesz: merge help/version getopt loop into main loop
+
+The main() function scanned command-line options in two passes: the
+first pass checked for --help/--version, and the second processed
+normal options. When getopt_long encountered an unknown option in the
+first pass, it printed an error message. The same error was then
+printed again during the second pass, resulting in a duplicate
+"unrecognized option" message.
+
+Fix this by merging the first getopt_long loop into the main one,
+following the standard util-linux convention.
+
+Fixes: https://github.com/util-linux/util-linux/issues/3817
+Signed-off-by: Karel Zak <kzak@redhat.com>
+
+Index: util-linux-worktree/misc-utils/pipesz.c
+===================================================================
+--- util-linux-worktree.orig/misc-utils/pipesz.c
++++ util-linux-worktree/misc-utils/pipesz.c
+@@ -228,18 +228,6 @@ int main(int argc, char **argv)
+ 	textdomain(PACKAGE);
+ 	close_stdout_atexit();
+ 
+-	/* check for --help or --version */
+-	while ((c = getopt_long(argc, argv, shortopts, longopts, NULL)) != -1) {
+-		switch (c) {
+-		case 'h':
+-			usage();
+-		case 'V':
+-			print_version(EXIT_SUCCESS);
+-		}
+-	}
+-
+-	/* gather normal options */
+-	optind = 1;
+ 	while ((c = getopt_long(argc, argv, shortopts, longopts, NULL)) != -1) {
+ 		err_exclusive_options(c, longopts, excl, excl_st);
+ 
+@@ -277,6 +265,11 @@ int main(int argc, char **argv)
+ 		case 'v':
+ 			opt_verbose = TRUE;
+ 			break;
++
++		case 'V':
++			print_version(EXIT_SUCCESS);
++		case 'h':
++			usage();
+ 		default:
+ 			errtryhelp(EXIT_FAILURE);
+ 		}
