@@ -1,3 +1,9 @@
+util-linux (2.40.4-3deepin11) unstable; urgency=medium
+
+  * fix CVE-2026-3184: Use original FQDN for PAM_RHOST in login
+
+ -- deepin-ci-robot <packages@deepin.org>  Tue, 26 May 2026 23:23:00 +0800
+
 util-linux (2.40.4-3deepin10) unstable; urgency=medium
 
   * fix CVE-2026-27456: Add LOOPDEV_FL_NOFOLLOW to prevent symlink attacks
