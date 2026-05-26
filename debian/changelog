@@ -1,3 +1,9 @@
+util-linux (2.40.4-3deepin10) unstable; urgency=medium
+
+  * fix CVE-2026-27456: Add LOOPDEV_FL_NOFOLLOW to prevent symlink attacks
+
+ -- deepin-ci-robot <packages@deepin.org>  Tue, 26 May 2026 23:19:00 +0800
+
 util-linux (2.40.4-3deepin9) unstable; urgency=medium
 
   * fix CVE-2025-14104 
