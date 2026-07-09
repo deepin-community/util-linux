@@ -1,3 +1,11 @@
+util-linux (2.40.4-3deepin17) unstable; urgency=medium
+
+  * fix(cve): CVE-2026-53612 (unknown) - libmount: use the pinned target
+    fd for chown/chmod in hook_owner so restricted mounts do not follow
+    a swapped path component
+
+ -- deepin-ci-robot <packages@deepin.org>  Thu, 29 Oct 2026 16:45:00 +0800
+
 util-linux (2.40.4-3deepin16) unstable; urgency=medium
 
   * fix(cve): CVE-2026-53615 (unknown) - libblkid: dos: validate EBR
