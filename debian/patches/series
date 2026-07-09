@@ -45,3 +45,4 @@ openat2-header-detection-and-resolve-fixes.patch
 CVE-2026-53615.patch
 CVE-2026-53613.patch
 CVE-2026-53612.patch
+CVE-2026-53614.patch
