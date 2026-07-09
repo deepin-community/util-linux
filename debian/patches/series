@@ -1,3 +1,4 @@
+CVE-2026-13595.patch
 CVE-2026-53614.patch
 CVE-2026-53612.patch
 debian/man-getopt-examples.patch
