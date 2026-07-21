@@ -1,3 +1,9 @@
+util-linux (2.40.4-3deepin11) unstable; urgency=medium
+
+  * fix(cve): CVE-2026-3184
+
+ -- deepin-ci-robot <packages@deepin.org>  Tue, 21 Jul 2026 08:37:21 +0800
+
 util-linux (2.40.4-3deepin10) unstable; urgency=medium
 
   * fix(cve): CVE-2026-27456
