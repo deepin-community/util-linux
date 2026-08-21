@@ -1,3 +1,15 @@
+util-linux (2.40.4-3deepin13) unstable; urgency=medium
+
+  * fix UT-2026-0115: su runs in its own pseudo-terminal by default
+    for interactive sessions, avoiding TIOCSTI/TIOCLINUX ioctl
+    command injection via the shared controlling terminal. runuser
+    is not affected; use -T/--no-pty to opt out.
+  * tests: misc/pipesz skips when not running as root (F_SETPIPE_SZ
+    growth requires CAP_SYS_RESOURCE, the test fails for unprivileged
+    builds).
+
+ -- xinpeng.wang <wangxinpeng@uniontech.com>  Fri, 21 Aug 2026 12:48:31 +0800
+
 util-linux (2.40.4-3deepin12) unstable; urgency=medium
 
   * fix(cve): CVE-2026-13595
