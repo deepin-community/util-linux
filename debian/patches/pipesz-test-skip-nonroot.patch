@@ -1,0 +1,23 @@
+Description: misc/pipesz test: skip when running without root privileges
+ Growing the pipe buffer size (F_SETPIPE_SZ) beyond the default capacity
+ requires CAP_SYS_RESOURCE, so the pipe-max-size subtest fails when the
+ test suite is executed by an unprivileged user (e.g. debuild as a
+ regular user). Skip the whole test as non-root, like blkid/topology
+ and ipcs/limits already do.
+Origin: internal
+Upstream-Status: Not-Forwarded
+---
+
+Index: deepin-util-linux/tests/ts/misc/pipesz
+===================================================================
+--- deepin-util-linux.orig/tests/ts/misc/pipesz
++++ deepin-util-linux/tests/ts/misc/pipesz
+@@ -18,6 +18,8 @@ TS_DESC="pipesz"
+ . "$TS_TOPDIR"/functions.sh
+ ts_init "$*"
+ 
++ts_skip_nonroot
++
+ ts_check_test_command "$TS_CMD_PIPESZ"
+ ts_check_test_command "$TS_HELPER_SYSINFO"
+ 
