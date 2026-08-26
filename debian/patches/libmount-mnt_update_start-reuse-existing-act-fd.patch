@@ -1,0 +1,25 @@
+Description: libmount: reuse existing act fd in mnt_update_start on ro retry
+ When mnt_context_mount() retries a failed mount as read-only,
+ mnt_context_prepare_update() calls mnt_update_start() a second time.
+ Without checking whether act_fd is already open, the old fd is
+ overwritten and leaked, and its LOCK_SH prevents mnt_update_end() from
+ unlinking the act file. Guard mnt_update_start() with an act_fd >= 0
+ check to reuse the existing fd instead of opening a new one.
+Author: wangrong <wangrong@uniontech.com>
+Last-Update: 2026-08-20
+---
+
+--- a/libmount/src/tab_update.c
++++ b/libmount/src/tab_update.c
+@@ -1056,6 +1056,11 @@
+ 	    asprintf(&upd->act_filename, "%s.act", upd->filename) <= 0)
+ 		return -ENOMEM;
+ 
++	if (upd->act_fd >= 0) {
++		DBG(UPDATE, ul_debugobj(upd, "reusing existing act file"));
++		return 0;
++	}
++
+ 	/* Use exclusive lock to avoid some other proces will remove the the
+ 	 * file before it's marked as used by LOCK_SH (below) */
+ 	rc = update_init_lock(upd, NULL);
