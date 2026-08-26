@@ -1,0 +1,34 @@
+Description: libmount: properly end act file in mnt_free_update
+ mnt_free_update() only close()d act_fd without releasing the lock or
+ unlinking the utab.act file, leaving /run/mount/utab.act orphaned when
+ mount failed and mnt_context_update_tabs() was skipped. Call
+ mnt_update_end() before unreffing members to unlock, unlink and close
+ the act file properly. Add a fallback close() for the case where
+ mnt_update_end() fails to acquire the lock and returns early without
+ closing the fd.
+Author: wangrong <wangrong@uniontech.com>
+Last-Update: 2026-08-20
+---
+
+diff --git a/libmount/src/tab_update.c b/libmount/src/tab_update.c
+index d44d190..463d8e0 100644
+--- a/libmount/src/tab_update.c
++++ b/libmount/src/tab_update.c
+@@ -80,11 +80,15 @@ void mnt_free_update(struct libmnt_update *upd)
+ 
+ 	DBG(UPDATE, ul_debugobj(upd, "free"));
+ 
++	if (upd->act_fd >= 0) {
++		mnt_update_end(upd);
++		if (upd->act_fd >= 0)
++			close(upd->act_fd);
++		upd->act_fd = -1;
++	}
+ 	mnt_unref_lock(upd->lock);
+ 	mnt_unref_fs(upd->fs);
+ 	mnt_unref_table(upd->mountinfo);
+-	if (upd->act_fd >= 0)
+-		close(upd->act_fd);
+ 	free(upd->target);
+ 	free(upd->filename);
+ 	free(upd->act_filename);

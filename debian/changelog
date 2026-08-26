@@ -1,3 +1,10 @@
+util-linux (2.40.4-3deepin14) unstable; urgency=medium
+
+  * libmount: properly end act file in mnt_free_update
+  * libmount: reuse existing act fd in mnt_update_start on ro retry
+
+ -- wangrong <wangrong@uniontech.com>  Wed, 26 Aug 2026 16:23:37 +0800
+
 util-linux (2.40.4-3deepin13) unstable; urgency=medium
 
   * fix UT-2026-0115: su runs in its own pseudo-terminal by default
