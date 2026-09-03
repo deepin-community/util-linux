@@ -1,3 +1,11 @@
+util-linux (2.40.4-3deepin15) unstable; urgency=medium
+
+  * fix(cve): CVE-2026-78409 (high) - libmount: fix X-mount.subdir
+    symlink following on detached tree. Upstream:
+    https://github.com/util-linux/util-linux/commit/ce4e181aa
+
+ -- deepin-ci-robot <packages@deepin.org>  Tue, 26 May 2026 23:23:00 +0800
+
 util-linux (2.40.4-3deepin14) unstable; urgency=medium
 
   * libmount: properly end act file in mnt_free_update
