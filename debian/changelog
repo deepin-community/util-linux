@@ -1,6 +1,9 @@
 util-linux (2.40.4-3deepin11) unstable; urgency=medium
 
   * fix CVE-2026-3184: Use original FQDN for PAM_RHOST in login
+  * fix(cve): CVE-2026-78409 (high) - libmount: fix X-mount.subdir
+    symlink following on detached tree [CVE-2026-78409]   Upstream:
+    https://github.com/util-linux/util-linux/commit/ce4e181aa
 
  -- deepin-ci-robot <packages@deepin.org>  Tue, 26 May 2026 23:23:00 +0800
 
