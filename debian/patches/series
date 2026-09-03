@@ -37,3 +37,4 @@ UT-2026-0115-su-tiocsti.patch
 pipesz-test-skip-nonroot.patch
 libmount-mnt_free_update-properly-end-act-file.patch
 libmount-mnt_update_start-reuse-existing-act-fd.patch
+CVE-2026-78409.patch
