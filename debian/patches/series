@@ -39,3 +39,4 @@ libmount-mnt_free_update-properly-end-act-file.patch
 libmount-mnt_update_start-reuse-existing-act-fd.patch
 CVE-2026-78409.patch
 CVE-2026-78408.patch
+CVE-2026-78410.patch
