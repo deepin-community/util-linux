@@ -9,6 +9,9 @@ util-linux (2.40.4-3deepin15) unstable; urgency=medium
     linux/commit/afe067c979b9ba2cbe856f7c6411210120ea62aa,https://github
     .com/util-linux/util-
     linux/commit/003c622428f09fc6544ed06b533d278dc14f88e0
+  * fix(cve): CVE-2026-78410 (high) - libmount: pin source path with
+    openat2() for restricted users [CVE-2026-78410]   Upstream:
+    https://github.com/util-linux/util-linux/commit/9fcb98bf0
 
  -- deepin-ci-robot <packages@deepin.org>  Tue, 26 May 2026 23:23:00 +0800
 
