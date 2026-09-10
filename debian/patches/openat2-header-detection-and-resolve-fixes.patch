@@ -1,0 +1,65 @@
+Description: Fix build with openat2-based CVE patches
+ The openat2 hardening patches (CVE-2026-78409/78410) reference
+ struct open_how and the RESOLVE_* flags from <linux/openat2.h>, but
+ the 2.40.4 configure never checks for that header, so
+ HAVE_LINUX_OPENAT2_H was never defined and the build failed with
+ "variable 'how' has initializer but incomplete type" in
+ lib/fileutils.c.  Ask configure for linux/openat2.h and, when
+ available, include it from mount-api-utils.h so the RESOLVE_* flags
+ reach all libmount users.  Also correct the RESOLVE_NO_SYMLINKS
+ fallback value (0x02 is RESOLVE_NO_MAGICLINKS, 0x04 is
+ RESOLVE_NO_SYMLINKS) and declare mnt_context_target_fd_required().
+Author: golf66 <golf66@deepin.org>
+Last-Update: 2026-09-10
+--- a/include/mount-api-utils.h
++++ b/include/mount-api-utils.h
+@@ -203,6 +203,18 @@ static inline int fspick(int dfd, const
+ }
+ #endif
+ 
++#ifdef HAVE_LINUX_OPENAT2_H
++# include <linux/openat2.h>
++#endif
++
++/* openat2() RESOLVE_* flags; keep in sync with <linux/openat2.h> */
++#ifndef RESOLVE_NO_SYMLINKS
++# define RESOLVE_NO_SYMLINKS	0x04
++#endif
++#ifndef RESOLVE_BENEATH
++# define RESOLVE_BENEATH	0x08
++#endif
++
+ #endif /* HAVE_MOUNTFD_API && HAVE_LINUX_MOUNT_H */
+ #endif /* UTIL_LINUX_MOUNT_API_UTILS */
+ 
+--- a/include/fileutils.h
++++ b/include/fileutils.h
+@@ -70,7 +70,7 @@ extern int ul_openat_resolve(int dirfd,
+ 			     mode_t mode, unsigned long long resolve);
+ 
+ #ifndef RESOLVE_NO_SYMLINKS
+-# define RESOLVE_NO_SYMLINKS	0x02
++# define RESOLVE_NO_SYMLINKS	0x04
+ #endif
+ #ifndef RESOLVE_BENEATH
+ # define RESOLVE_BENEATH	0x08
+--- a/libmount/src/mountP.h
++++ b/libmount/src/mountP.h
+@@ -696,6 +696,7 @@ static inline struct libmnt_sysapi *mnt_
+ int mnt_context_open_tree(struct libmnt_context *cxt, const char *path, unsigned long mflg);
+ int mnt_open_tree(int dirfd, const char *path, unsigned long flags,
+ 		  unsigned long long resolve);
++int mnt_context_target_fd_required(struct libmnt_context *cxt);
+ 
+ #endif
+ 
+--- a/configure.ac
++++ b/configure.ac
+@@ -342,6 +342,7 @@ AC_CHECK_HEADERS([ \
+ 	linux/fd.h \
+ 	linux/fiemap.h \
+ 	linux/landlock.h \
++	linux/openat2.h \
+ 	linux/kcmp.h \
+ 	linux/net_namespace.h \
+ 	linux/nsfs.h \

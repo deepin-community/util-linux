@@ -41,3 +41,4 @@ CVE-2026-78409.patch
 CVE-2026-78408.patch
 CVE-2026-78410.patch
 CVE-2026-76642.patch
+openat2-header-detection-and-resolve-fixes.patch
