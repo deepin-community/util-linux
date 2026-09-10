@@ -12,6 +12,10 @@ util-linux (2.40.4-3deepin15) unstable; urgency=medium
   * fix(cve): CVE-2026-78410 (high) - libmount: pin source path with
     openat2() for restricted users [CVE-2026-78410]   Upstream:
     https://github.com/util-linux/util-linux/commit/9fcb98bf0
+  * fix(cve): CVE-2026-76642 (high) - [PATCH] libmount: skip post-mount
+    hooks after failed mount helper [CVE-2026-76642]   Upstream:
+    https://github.com/util-linux/util-
+    linux/commit/1d14676ea70003e9f5b2a6a76af0cadb1190411a
 
  -- deepin-ci-robot <packages@deepin.org>  Tue, 26 May 2026 23:23:00 +0800
 
