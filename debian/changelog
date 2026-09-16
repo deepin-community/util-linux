@@ -4,6 +4,10 @@ util-linux (2.40.4-3deepin16) unstable; urgency=medium
     data and links within extended partition   Upstream:
     https://github.com/util-linux/util-
     linux/commit/a2d858176b609ab5b8535021a3af9cd302d23d31
+  * fix(cve): CVE-2026-53613 (unknown) - libmount: add fd_target to
+    context for TOCTOU prevention   Upstream: https://github.com/util-
+    linux/util-
+    linux/commit/78a860982e036f38fe9c0b3344998df5ac2c2ff5.patch
 
  -- deepin-ci-robot <packages@deepin.org>  Fri, 11 Sep 2026 03:51:36 +0800
 
