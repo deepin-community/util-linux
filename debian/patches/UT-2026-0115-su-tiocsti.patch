@@ -1,0 +1,38 @@
+Description: UT-2026-0115 - 安全修复
+ Interactively started su (stdin is a tty) now allocates its own
+ pseudo-terminal by default, so the target session does not share the
+ controlling terminal with the caller session. This prevents
+ TIOCSTI/TIOCLINUX ioctl command injection by a process in the
+ unprivileged session (kernel < 6.2 or dev.tty.legacy_tiocsti=1).
+ The pty slave and proxy stdin handling is unchanged (upstream
+ lib/pty-session.c already keeps the slave cooked and makes the
+ proxy stdin raw), so line editing and tab completion keep working.
+ Use -T/--no-pty to opt out. runuser keeps its historical behavior.
+Origin: internal, UT-2026-0115; mechanism per upstream su(1) --pty
+ (https://github.com/util-linux/util-linux/pull/2685
+  https://github.com/util-linux/util-linux/commit/2863ed62d77bb2bae5aecc2297236d440ad21c4d)
+Bug: https://security-tracker.debian.org/tracker/CVE-2016-2779
+Last-Update: 2026-08-21
+---
+
+Index: deepin-util-linux/login-utils/su-common.c
+===================================================================
+--- deepin-util-linux.orig/login-utils/su-common.c
++++ deepin-util-linux/login-utils/su-common.c
+@@ -1240,6 +1240,16 @@ int su_main(int argc, char **argv, int m
+ 	if (request_same_session || !command || !su->pwd->pw_uid)
+ 		su->same_session = 1;
+ 
++	/* UT-2026-0115: interactively started su runs in its own
++	 * pseudo-terminal so that the target session does not share the
++	 * controlling terminal with the caller session. This prevents
++	 * TIOCSTI/TIOCLINUX ioctl command injection by a process running
++	 * in the unprivileged session (kernel < 6.2 without
++	 * dev.tty.legacy_tiocsti, see su(1) --pty); use -T/--no-pty to
++	 * opt out. runuser keeps its historical behavior. */
++	if (!su->runuser && su->isterm)
++		su->force_pty = 1;
++
+ 	/* initialize shell variable only if "-u <user>" not specified */
+ 	if (su->runuser_uopt) {
+ 		shell = NULL;
